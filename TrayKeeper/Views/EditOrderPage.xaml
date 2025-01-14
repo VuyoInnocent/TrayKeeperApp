@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrayKeeper.Views.EditOrderPage"
+             Title="EditOrderPage">
+    <StackLayout Padding="20">
+        <Entry Placeholder="Client Name" 
+               Text="{Binding ClientName, Mode=TwoWay}" />
+        <Entry Placeholder="Cellphone" 
+               Text="{Binding Cellphone, Mode=TwoWay}" />
+        <Entry Placeholder="Location" 
+               Text="{Binding Location, Mode=TwoWay}" />
+        <Entry Placeholder="Number of Trays Bought" 
+               Text="{Binding NumberOfTraysBought, Mode=TwoWay}" />
+
+        <Label Text="Paid" FontSize="Medium" />
+        <Switch IsToggled="{Binding IsPaid}" />
+
+        <Label Text="Collected" FontSize="Medium" />
+        <Switch IsToggled="{Binding IsCollected}" />
+        <Button Text="Save" Command="{Binding SaveCommand}" />
+    </StackLayout>
+</ContentPage>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrayKeeper.Views.SalesPage"
+             Title="Sales">
+    <StackLayout Padding="20">
+        <Label Text="Sales Report" />
+
+        <ListView x:Name="SalesListView"
+                   ItemsSource="{Binding SalesDetails}" 
+                   SeparatorVisibility="Default">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Padding="10">
+                            <Label Text="{Binding NumberOfTraysSold}" />
+                            <Label Text="{Binding Revenue}" />
+                            <Label Text="{Binding ProfitLoss}" />
+                            <Label Text="{Binding NumberOfTraysLeft}" />
+                            <Label Text="{Binding NumberOfTraysBroken}" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        <Button Text="Generate Sales Report" Margin="5" Command="{Binding GenerateSalesReportCommand}" />
+        <Button Text="Export to Excel" Margin="5" Command="{Binding ExportToExcelCommand}" />
+        <Button Text="Export to PDF" Margin="5" Command="{Binding ExportToPdfCommand}" />
+
+    </StackLayout>
+</ContentPage>

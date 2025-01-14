@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="TrayKeeper.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:TrayKeeper.Views"
+    xmlns:helper="clr-namespace:TrayKeeper.Helpers"
+    xmlns:vm="clr-namespace:TrayKeeper.ViewModel"
+    Shell.FlyoutBehavior="{Binding FlyoutBehavior}"
+    Title="TrayKeeper">
+
+    <Shell.Resources>
+        <ResourceDictionary>
+            <helper:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        </ResourceDictionary>
+    </Shell.Resources>
+
+    <Shell.BindingContext>
+        <vm:AppViewModel  x:Name="ViewModel" />
+    </Shell.BindingContext>
+
+
+    <ShellContent Title="Login" 
+                  IsVisible="{Binding IsLoggedIn, Converter={StaticResource InverseBooleanConverter}}"
+                  ContentTemplate="{DataTemplate local:LoginPage}"
+                  Route="LoginPage" />
+    
+
+    <FlyoutItem Title="Orders" IsVisible="{Binding IsLoggedIn}" >
+        <ShellContent ContentTemplate="{DataTemplate local:OrderPage}" 
+                      Route="OrderPage"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Inventory" IsVisible="{Binding IsLoggedIn}" >
+        <ShellContent ContentTemplate="{DataTemplate local:InventoryPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Sales" IsVisible="{Binding IsLoggedIn}" >
+        <ShellContent ContentTemplate="{DataTemplate local:SalesPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Settings" IsVisible="{Binding IsLoggedIn}">
+        <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" />
+    </FlyoutItem>
+    
+    <FlyoutItem Title="Loggout" IsVisible="{Binding IsLoggedIn}">
+        <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" />
+    </FlyoutItem>
+
+</Shell>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrayKeeper.Views.InventoryPage"
+             Title="Inventory">
+    <StackLayout Padding="20">
+        <ListView ItemsSource="{Binding InventoryRecords}">
+            <ListView.Header>
+                <StackLayout Orientation="Horizontal" Padding="10">
+                    <Label Text="Batch Number" WidthRequest="60" />
+                    <Label Text="Date" WidthRequest="80" />
+                    <Label Text="Trays Bought" WidthRequest="60" />
+                    <Label Text="Damaged Trays" WidthRequest="60" />
+                    <Label Text="Trays Sold" WidthRequest="60" />
+                </StackLayout>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Padding="10">
+                            <Label Text="{Binding InventoryNumber}" WidthRequest="60" />
+                            <Label Text="{Binding Date, StringFormat='{0:dd/MM/yyyy}'}" WidthRequest="80" />
+                            <Label Text="{Binding NumberOfTraysBought}" WidthRequest="60" />
+                            <Label Text="{Binding NumberOfDamagedTrays}" WidthRequest="60" />
+                            <Label Text="{Binding NumberOfTraysSold}" WidthRequest="60" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        <Label Text="Inventory Management" FontSize="Large" HorizontalOptions="Center" />
+
+        <Entry Placeholder="Number of Trays Bought" Keyboard="Numeric"
+               Text="{Binding NumberOfTraysBought, Mode=TwoWay }" />
+
+        <Entry Placeholder="Number of Damaged Trays" Keyboard="Numeric"
+               Text="{Binding NumberDamagedTrays, Mode=TwoWay }"/>
+
+        <Entry Placeholder="Number of Trays Sold" Keyboard="Numeric" 
+               Text="{Binding NumberOfTraysSold, Mode=TwoWay }"/>
+
+        <Label Text="Date:" />
+        <DatePicker x:Name="DateEntry" Date="{Binding Date, Mode=TwoWay }" />
+
+        <Button Text="Save Inventory" Command="{Binding SaveInventoryCommand}" />
+    </StackLayout>
+</ContentPage>

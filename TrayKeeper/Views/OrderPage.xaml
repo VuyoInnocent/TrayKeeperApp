@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrayKeeper.Views.OrderPage"
+             Title="Orders">
+    <StackLayout Padding="20">
+        <!-- ListView to display previously captured orders -->
+        <ListView x:Name="ordersListView"
+                  ItemsSource="{Binding Orders}" 
+                  SeparatorVisibility="Default"
+                  SelectedItem="{Binding SelectedOrder, Mode=TwoWay}"
+                  ItemTapped="OnOrderTapped">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout >
+                            <StackLayout Orientation="Horizontal" VerticalOptions="Center">
+                                <Label Text="{Binding ClientName}" 
+                               FontSize="Medium" 
+                               FontAttributes="Bold" 
+                               HorizontalOptions="Start" />
+                                <Label Text="{Binding NumberTraysBought, StringFormat=' Trays Bought: {0}'}" 
+                               FontSize="Medium" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Start" />
+                            </StackLayout>
+                            <Label Text="{Binding FormattedDetails}" 
+                           FontSize="Small" 
+                           TextColor="Gray" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        <Entry Placeholder="Client Name" x:Name="clientNameEntry" Text="{Binding ClientName, Mode=TwoWay}" />
+        <Entry Placeholder="Cellphone" x:Name="cellphoneEntry" Text="{Binding Cellphone, Mode=TwoWay}" />
+        <Entry Placeholder="Location" x:Name="locationEntry" Text="{Binding Location, Mode=TwoWay}" />
+        <Entry Placeholder="Number of Trays Bought" x:Name="NumberTraysBoughtEntry" 
+               Text="{Binding NumberOfTraysBought, Mode=TwoWay}"/>
+        <!-- Picker for selecting batch number -->
+        <Picker Title="Select Batch Number" 
+            SelectedItem="{Binding SelectedBatchNumber, Mode=TwoWay}" 
+            ItemsSource="{Binding InventoryNumber}">
+        </Picker>
+        <Button Text="Add Order" Command="{Binding AddOrderCommand}"/>
+    </StackLayout>
+</ContentPage>
