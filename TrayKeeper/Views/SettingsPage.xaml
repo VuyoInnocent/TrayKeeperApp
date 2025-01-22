@@ -2,19 +2,61 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TrayKeeper.Views.SettingsPage"
-             Title="Settings">
-    
-    <StackLayout Padding="20">
-        <Label Text="Tray Selling Price" FontSize="Medium" />
-        <Entry x:Name="SellingPriceEntry" 
-               Keyboard="Numeric" 
-               Text="{Binding TraySellingPrice, Mode=TwoWay}" />
+             Title="Settings"
+             BackgroundColor="#000000">
+    <ContentPage.Content>
+        <Grid Padding="20" RowDefinitions="*,Auto,*">
+            <StackLayout Grid.Row="1" Spacing="20">
+                
+                <!-- Page Title -->
+                <Label Text="Settings" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       TextColor="#D5F8B0" 
+                       HorizontalOptions="Center" />
 
-        <Label Text="Tray Cost Price" FontSize="Medium" />
-        <Entry x:Name="CostPriceEntry" 
-               Keyboard="Numeric" 
-               Text="{Binding TrayCostPrice, Mode=TwoWay}" />
+                <!-- Tray Selling Price -->
+                <StackLayout Spacing="10">
+                    <Label Text="Tray Selling Price" 
+                           FontSize="16" 
+                           TextColor="#FFFFFF" />
+                    <Frame BackgroundColor="#303030" CornerRadius="12">
+                        <Entry x:Name="SellingPriceEntry" 
+                               Keyboard="Numeric" 
+                               Text="{Binding TraySellingPrice, Mode=TwoWay}" 
+                               Placeholder="Enter Selling Price"
+                               FontSize="14"
+                               TextColor="#FFFFFF"
+                               BackgroundColor="Transparent" />
+                    </Frame>
+                </StackLayout>
 
-        <Button Text="Save" Command="{Binding SaveCommand}" />
-    </StackLayout>
+                <!-- Tray Cost Price -->
+                <StackLayout Spacing="10">
+                    <Label Text="Tray Cost Price" 
+                           FontSize="16" 
+                           TextColor="#FFFFFF" />
+                    <Frame BackgroundColor="#303030" CornerRadius="12">
+                        <Entry x:Name="CostPriceEntry" 
+                               Keyboard="Numeric" 
+                               Text="{Binding TrayCostPrice, Mode=TwoWay}" 
+                               Placeholder="Enter Cost Price"
+                               FontSize="14"
+                               TextColor="#FFFFFF"
+                               BackgroundColor="Transparent" />
+                    </Frame>
+                </StackLayout>
+
+                <!-- Save Button -->
+                <Button Text="Save"
+                        Command="{Binding SaveCommand}" 
+                        TextColor="#FFFFFF" 
+                        BackgroundColor="#D5F8B020" 
+                        CornerRadius="25" 
+                        HeightRequest="50" 
+                        FontSize="16" 
+                        FontAttributes="Bold" />
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
 </ContentPage>
