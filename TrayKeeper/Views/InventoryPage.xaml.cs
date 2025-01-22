@@ -9,4 +9,15 @@ public partial class InventoryPage : ContentPage
 		InitializeComponent();
         BindingContext = inventoryViewModel;
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        var inventoryViewModel = BindingContext as InventoryViewModel;
+
+        if (inventoryViewModel != null){
+            inventoryViewModel.LoadInventory();
+        }
+    }
 }

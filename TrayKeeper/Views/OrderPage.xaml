@@ -5,7 +5,7 @@
              Title="Orders"
              BackgroundColor="#000000">
     <ContentPage.Content>
-        <Grid Padding="20" RowDefinitions="*,Auto,*">
+        <Grid Padding="10" RowDefinitions="*,Auto,*">
             <StackLayout Grid.Row="1" Spacing="20">
                 
                 <!-- Page Title -->
@@ -25,9 +25,9 @@
                               BackgroundColor="Transparent">
                         <ListView.Header>
                             <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
-                                <Label Text="Client" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="100" />
-                                <Label Text="Trays Bought" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="120" />
-                                <Label Text="Details" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="200" />
+                                <Label Text="Client" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
+                                <Label Text="Trays Bought" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="100" />
+                                <Label Text="Details" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="120" />
                             </StackLayout>
                         </ListView.Header>
                         <ListView.ItemTemplate>
@@ -36,13 +36,13 @@
                                     <StackLayout Orientation="Horizontal" Padding="10" Spacing="10" BackgroundColor="#303030">
                                         <Label Text="{Binding ClientName}" 
                                                TextColor="#FFFFFF" 
-                                               WidthRequest="100" />
+                                               WidthRequest="40" />
                                         <Label Text="{Binding NumberTraysBought, StringFormat='Bought: {0}'}" 
                                                TextColor="#00FF00" 
-                                               WidthRequest="120" />
+                                               WidthRequest="80" />
                                         <Label Text="{Binding FormattedDetails}" 
                                                TextColor="#FFFFFF" 
-                                               WidthRequest="200" />
+                                               WidthRequest="120" />
                                     </StackLayout>
                                 </ViewCell>
                             </DataTemplate>

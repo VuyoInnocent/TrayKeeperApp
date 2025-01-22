@@ -70,7 +70,7 @@ namespace TrayKeeper.ViewModel
             NumberOfTraysSold = 0;
             Date = DateTime.Now;
         }
-        private async void LoadInventory()
+        public async void LoadInventory()
         {
             try
             {

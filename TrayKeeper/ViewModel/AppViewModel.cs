@@ -1,17 +1,18 @@
 ﻿using System.ComponentModel;
+using System.Windows.Input;
 
 namespace TrayKeeper.ViewModel
 {
     public class AppViewModel : INotifyPropertyChanged
     {
-
         private bool _isLoggedIn;
-        private bool _isLoggedOut;
         private FlyoutBehavior _flyoutBehavior;
+        public ICommand LogoutCommand { get; }
         public AppViewModel()
         {
             IsLoggedIn = false;
             FlyoutBehavior = FlyoutBehavior.Disabled;
+            LogoutCommand = new Command(Logout);
         }
 
         public FlyoutBehavior FlyoutBehavior
@@ -37,23 +38,13 @@ namespace TrayKeeper.ViewModel
                     _isLoggedIn = value;
                     OnPropertyChanged(nameof(IsLoggedIn));
 
-                    //// Update FlyoutBehavior based on login state
-                    //FlyoutBehavior = _isLoggedIn ? FlyoutBehavior.Flyout : FlyoutBehavior.Disabled;
                 }
             }
         }
 
-        public bool IsLoggedOut
+        public void Logout()
         {
-            get => _isLoggedOut;
-            set
-            {
-                if (_isLoggedOut != value)
-                {
-                    _isLoggedOut = value;
-                    OnPropertyChanged(nameof(IsLoggedOut));
-                }
-            }
+            IsLoggedIn = false;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
