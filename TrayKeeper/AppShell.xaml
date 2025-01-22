@@ -67,8 +67,8 @@
         <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Logout" IsVisible="{Binding IsLoggedIn}">
-        <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" />
+    <FlyoutItem Title="Logout" Route="logout" IsVisible="{Binding IsLoggedIn}" >
+        <ShellContent ContentTemplate="{DataTemplate local:LoginPage}" />
     </FlyoutItem>
 
 </Shell>

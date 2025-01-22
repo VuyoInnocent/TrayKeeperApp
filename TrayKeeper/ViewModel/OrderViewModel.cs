@@ -63,17 +63,16 @@ namespace TrayKeeper.ViewModel
 
             var getInventory = await _inventoryService.GetInventory();
             int inventoryId = int.Parse(_selectedBatchNumber);
-            var batch = getInventory.Where(x => x.InventoryNumber == inventoryId).FirstOrDefault();
+            var existingBatch = getInventory.Where(x => x.InventoryNumber == inventoryId).FirstOrDefault();
 
-            var availableStock = batch.NumberOfTraysBought - batch.NumberOfTraysSold;
 
-            if (availableStock > newOrder.NumberTraysBought)
+            if (existingBatch?.NumberOfTraysBought >= newOrder.NumberTraysBought)
             {
-                batch.NumberOfTraysBought = batch.NumberOfTraysBought - newOrder.NumberTraysBought;
-                batch.NumberOfTraysSold += newOrder.NumberTraysBought;
+                existingBatch.NumberOfTraysBought = existingBatch.NumberOfTraysBought - newOrder.NumberTraysBought;
+                existingBatch.NumberOfTraysSold += newOrder.NumberTraysBought;
 
                 await _orderService.AddOrder(newOrder);
-                await _inventoryService.UpdateInventory(batch);
+                await _inventoryService.UpdateInventory(existingBatch);
                 LoadOrders();
                 clear();
 
@@ -96,7 +95,7 @@ namespace TrayKeeper.ViewModel
 
             await Application.Current.MainPage.Navigation.PushAsync(editPage);
         }
-        private async void LoadOrders()
+        public async void LoadOrders()
         {
             var orders = await _orderService.GetOrders();
             var inventory = await _inventoryService.GetInventory();

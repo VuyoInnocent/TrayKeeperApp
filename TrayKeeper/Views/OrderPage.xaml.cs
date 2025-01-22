@@ -16,11 +16,19 @@ public partial class OrderPage : ContentPage
         {
             var selectedOrder = e.Item as Orders;
 
-            // Execute the EditOrderCommand with the selected order
             ((OrderViewModel)BindingContext).EditOrderCommand.Execute(selectedOrder);
 
-            // Optionally deselect the item
             ((ListView)sender).SelectedItem = null;
+        }
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        var orderViewModel = BindingContext as OrderViewModel;
+
+        if (orderViewModel != null) {
+            orderViewModel.LoadOrders();
         }
     }
 }
