@@ -12,38 +12,62 @@
     <Shell.Resources>
         <ResourceDictionary>
             <helper:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+
+            <!-- Style for Flyout Items -->
+            <Style TargetType="FlyoutItem">
+                <Setter Property="Shell.BackgroundColor" Value="#000000" />
+                <Setter Property="Shell.ForegroundColor" Value="#FFFFFF" />
+                <Setter Property="Shell.TitleColor" Value="#FFFFFF" />
+                <Setter Property="Shell.DisabledColor" Value="#D5F8B020" />
+                <Setter Property="Shell.FlyoutBackgroundColor" Value="#000000" />
+            </Style>
+
+            <!-- Style for Selected Flyout Item -->
+            <Style TargetType="ShellContent">
+                <Setter Property="Shell.BackgroundColor" Value="#D5F8B020" />
+            </Style>
         </ResourceDictionary>
     </Shell.Resources>
 
     <Shell.BindingContext>
-        <vm:AppViewModel  x:Name="ViewModel" />
+        <vm:AppViewModel x:Name="ViewModel" />
     </Shell.BindingContext>
 
+    <!-- Flyout Header -->
+    <Shell.FlyoutHeader>
+        <Grid BackgroundColor="#000000" Padding="10">
+            <Image Source="logo_traykeeper.png" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="Center" 
+                   WidthRequest="100" 
+                   HeightRequest="50" />
+        </Grid>
+    </Shell.FlyoutHeader>
 
+    <!-- Content -->
     <ShellContent Title="Login" 
                   IsVisible="{Binding IsLoggedIn, Converter={StaticResource InverseBooleanConverter}}"
                   ContentTemplate="{DataTemplate local:LoginPage}"
                   Route="LoginPage" />
-    
 
-    <FlyoutItem Title="Orders" IsVisible="{Binding IsLoggedIn}" >
+    <FlyoutItem Title="Orders" IsVisible="{Binding IsLoggedIn}">
         <ShellContent ContentTemplate="{DataTemplate local:OrderPage}" 
-                      Route="OrderPage"/>
+                      Route="OrderPage" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Inventory" IsVisible="{Binding IsLoggedIn}" >
+    <FlyoutItem Title="Inventory" IsVisible="{Binding IsLoggedIn}">
         <ShellContent ContentTemplate="{DataTemplate local:InventoryPage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Sales" IsVisible="{Binding IsLoggedIn}" >
+    <FlyoutItem Title="Sales" IsVisible="{Binding IsLoggedIn}">
         <ShellContent ContentTemplate="{DataTemplate local:SalesPage}" />
     </FlyoutItem>
 
     <FlyoutItem Title="Settings" IsVisible="{Binding IsLoggedIn}">
         <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" />
     </FlyoutItem>
-    
-    <FlyoutItem Title="Loggout" IsVisible="{Binding IsLoggedIn}">
+
+    <FlyoutItem Title="Logout" IsVisible="{Binding IsLoggedIn}">
         <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" />
     </FlyoutItem>
 
