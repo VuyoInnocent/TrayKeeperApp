@@ -51,6 +51,13 @@ namespace TrayKeeper.ViewModel
                 return;
             }
 
+            if (Cellphone.Length != 10)
+            {
+                var toast2 = Toast.Make("Invalid Cellphone number", ToastDuration.Long, 30);
+                await toast2.Show();
+                return;
+            }
+
             // Create a new order object
             var newOrder = new Orders
             {
@@ -108,7 +115,11 @@ namespace TrayKeeper.ViewModel
 
             foreach (var item in inventory)
             {
-                _inventoryNumbers.Add(item.InventoryNumber +"");
+                if (item.NumberOfTraysBought > 0 )
+                {
+                    _inventoryNumbers.Add(item.InventoryNumber + "");
+                }
+          
             }
         }
         public void clear()

@@ -16,7 +16,7 @@
                        HorizontalOptions="Center" />
 
                 <!-- ListView -->
-                <Frame BackgroundColor="#303030" CornerRadius="12" HasShadow="True">
+            <Frame BackgroundColor="#303030" CornerRadius="12" HasShadow="True">
                     <ListView x:Name="ordersListView"
                               ItemsSource="{Binding Orders}" 
                               SeparatorVisibility="None"
@@ -26,8 +26,8 @@
                         <ListView.Header>
                             <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
                                 <Label Text="Client" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
-                                <Label Text="Trays Bought" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="100" />
-                                <Label Text="Details" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="120" />
+                                <Label Text="Bought" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="80" />
+                                <Label Text="Details" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="150" />
                             </StackLayout>
                         </ListView.Header>
                         <ListView.ItemTemplate>
@@ -35,20 +35,23 @@
                                 <ViewCell>
                                     <StackLayout Orientation="Horizontal" Padding="10" Spacing="10" BackgroundColor="#303030">
                                         <Label Text="{Binding ClientName}" 
-                                               TextColor="#FFFFFF" 
-                                               WidthRequest="40" />
+                               TextColor="#FFFFFF" 
+                               WidthRequest="40" />
                                         <Label Text="{Binding NumberTraysBought, StringFormat='Bought: {0}'}" 
-                                               TextColor="#00FF00" 
-                                               WidthRequest="80" />
-                                        <Label Text="{Binding FormattedDetails}" 
-                                               TextColor="#FFFFFF" 
-                                               WidthRequest="120" />
+                               TextColor="#00FF00" 
+                               WidthRequest="70" />
+                               <Label Text="{Binding FormattedDetails}" 
+                               FontSize="Small"
+                               TextColor="#FFFFFF" 
+                               MaxLines="2" 
+                               HeightRequest="100" 
+                               VerticalOptions="Start" />
                                     </StackLayout>
                                 </ViewCell>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                </Frame>
+             </Frame>
 
                 <!-- Input Fields -->
                 <StackLayout Spacing="10">

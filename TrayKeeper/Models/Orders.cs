@@ -16,7 +16,8 @@
         {
             get
             {
-                return $"Date: {DateOrdered.ToShortDateString()} Status: {(IsPaid ? "Paid" : "Not Paid")} Collected: {(IsCollected ? "Yes" : "No")}";
+                return $"Date: {DateOrdered.ToShortDateString()} : {(IsPaid ? "Paid" : "Not Paid")}" +"\n"+
+                       $"Collected: {(IsCollected ? "Yes" : "No")}";
             }
         }
     }

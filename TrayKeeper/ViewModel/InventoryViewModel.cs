@@ -35,7 +35,7 @@ namespace TrayKeeper.ViewModel
                 NumberOfTraysBought = NumberOfTraysBought,
                 NumberOfDamagedTrays = NumberOfDamagedTrays,
                 NumberOfTraysSold = NumberOfTraysSold,
-                Date = DateTime.Now
+                Date = Date
             };
 
             if (string.IsNullOrWhiteSpace(NumberOfTraysBought+"") ||
@@ -54,6 +54,7 @@ namespace TrayKeeper.ViewModel
             if (result > 0)
             {
                 message = "Inventory saved successfully!";
+                clear();
             }
             else
             {
@@ -64,11 +65,7 @@ namespace TrayKeeper.ViewModel
 
             LoadInventory();
 
-            // Optionally, clear the fields after saving
-            NumberOfTraysBought = 0;
-            NumberOfDamagedTrays = 0;
-            NumberOfTraysSold = 0;
-            Date = DateTime.Now;
+
         }
         public async void LoadInventory()
         {
@@ -87,13 +84,22 @@ namespace TrayKeeper.ViewModel
                 Console.WriteLine(ex.Message);
             }
         }
+
+        public void clear()
+        {
+            InventoryNumber = 0;
+            NumberOfTraysBought = 0;
+            NumberOfDamagedTrays = 0;
+            NumberOfTraysSold = 0;
+            Date = DateTime.Now;
+        }
         public int InventoryNumber
         {
             get => _inventoryNumber;
             set
             {
                 _inventoryNumber = value;
-                OnPropertyChanged(nameof(_inventoryNumber));
+                OnPropertyChanged(nameof(InventoryNumber));
             }
         }
         public int NumberOfTraysBought
@@ -102,7 +108,7 @@ namespace TrayKeeper.ViewModel
             set
             {
                 _numberOfTraysBought = value;
-                OnPropertyChanged(nameof(_numberOfTraysBought));
+                OnPropertyChanged(nameof(NumberOfTraysBought));
             }
         }
         public int NumberOfDamagedTrays
@@ -111,7 +117,7 @@ namespace TrayKeeper.ViewModel
             set
             {
                 _numberOfDamagedTrays = value;
-                OnPropertyChanged(nameof(_numberOfDamagedTrays));
+                OnPropertyChanged(nameof(NumberOfDamagedTrays));
             }
         }
         public int NumberOfTraysSold
@@ -120,7 +126,7 @@ namespace TrayKeeper.ViewModel
             set
             {
                 _numberOfTraysSold = value;
-                OnPropertyChanged(nameof(_numberOfTraysSold));
+                OnPropertyChanged(nameof(NumberOfTraysSold));
             }
         }
         public DateTime Date
@@ -129,7 +135,7 @@ namespace TrayKeeper.ViewModel
             set
             {
                 _date = value;
-                OnPropertyChanged(nameof(_date));
+                OnPropertyChanged(nameof(Date));
             }
         }
 
