@@ -5,8 +5,8 @@
              Title="Sales"
              BackgroundColor="#000000">
     <ContentPage.Content>
-        <Grid Padding="20" RowDefinitions="*,Auto,*">
-            <StackLayout Grid.Row="1" Spacing="20">
+        <Grid Padding="10" RowDefinitions="*,Auto,*">
+            <StackLayout  Spacing="20">
                 
                 <!-- Page Title -->
                 <Label Text="Sales Report" 
@@ -23,22 +23,22 @@
                               SeparatorVisibility="None">
                         <ListView.Header>
                             <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
-                                <Label Text="Trays Sold" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="80" />
-                                <Label Text="Revenue" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="80" />
-                                <Label Text="Profit/Loss" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="100" />
-                                <Label Text="Trays Left" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="80" />
-                                <Label Text="Trays Broken" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="100" />
+                                <Label Text="Trays Sold" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
+                                <Label Text="Revenue" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="60" />
+                                <Label Text="Profit/Loss" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
+                                <Label Text="Trays Left" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="70" />
+                                <Label Text="Trays Broken" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
                             </StackLayout>
                         </ListView.Header>
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell>
                                     <StackLayout Orientation="Horizontal" Padding="10" Spacing="10" BackgroundColor="#303030">
-                                        <Label Text="{Binding NumberOfTraysSold}" TextColor="#FFFFFF" WidthRequest="80" />
-                                        <Label Text="{Binding Revenue, StringFormat='${0:F2}'}" TextColor="#00FF00" WidthRequest="80" />
-                                        <Label Text="{Binding ProfitLoss, StringFormat='${0:F2}'}" TextColor="#FFFFFF" WidthRequest="100" />
-                                        <Label Text="{Binding NumberOfTraysLeft}" TextColor="#FFFFFF" WidthRequest="80" />
-                                        <Label Text="{Binding NumberOfTraysBroken}" TextColor="#FF0000" WidthRequest="100" />
+                                        <Label Text="{Binding NumberOfTraysSold}" TextColor="#FFFFFF" WidthRequest="50" />
+                                        <Label Text="{Binding Revenue, StringFormat='${0:F2}'}" TextColor="#00FF00" WidthRequest="60" />
+                                        <Label Text="{Binding ProfitLoss, StringFormat='${0:F2}'}" TextColor="#FFFFFF" WidthRequest="50" />
+                                        <Label Text="{Binding NumberOfTraysLeft}" TextColor="#FFFFFF" WidthRequest="50" />
+                                        <Label Text="{Binding NumberOfTraysBroken}" TextColor="#FF0000" WidthRequest="50" />
                                     </StackLayout>
                                 </ViewCell>
                             </DataTemplate>
