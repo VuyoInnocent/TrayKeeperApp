@@ -1,14 +1,18 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Microsoft.VisualBasic;
 using OfficeOpenXml;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrayKeeper.BL;
 using TrayKeeper.BL.Interfaces;
 using TrayKeeper.Models;
+using TrayKeeper.Helpers;
+using Constants = TrayKeeper.Helpers.Constants;
 
 namespace TrayKeeper.ViewModel
 {
@@ -17,7 +21,7 @@ namespace TrayKeeper.ViewModel
         private readonly ISalesService _salesService;
         private readonly IInventoryService _inventoryService;
 
-        public ObservableCollection<Inventory> SalesDetails { get; set; }
+        public ObservableCollection<Sales> SalesDetails { get; set; }
         public ICommand ExportToExcelCommand { get; }
         public ICommand ExportToPdfCommand { get; }
         public ICommand GenerateSalesReportCommand { get; }
@@ -28,7 +32,7 @@ namespace TrayKeeper.ViewModel
             _inventoryService = inventoryService;
             try
             {
-                SalesDetails = new ObservableCollection<Inventory>();
+                SalesDetails = new ObservableCollection<Sales>();
                 GenerateSalesReportCommand = new Command(GenerateReport);
                 //ExportToExcelCommand = new Command(ExportToExcel);
                 //ExportToPdfCommand = new Command(ExportToPdf);
@@ -54,7 +58,23 @@ namespace TrayKeeper.ViewModel
             SalesDetails.Clear();
             foreach (var inventory in inventories)
             {
-                SalesDetails.Add(inventory);
+                var batchPrice = Constants.TrayCostPrice * inventory.NumberOfTraysBought;
+                var traysleft = inventory?.NumberOfTraysBought > inventory?.NumberOfTraysSold ?
+                                        inventory.NumberOfTraysBought - inventory.NumberOfTraysSold : 
+                                        inventory?.NumberOfTraysSold - inventory?.NumberOfTraysBought;
+
+                decimal? eggsSold = inventory?.NumberOfTraysSold * Constants.TraySellingPrice;
+
+                var revenue = batchPrice - eggsSold;
+
+                SalesDetails.Add(new Sales{
+                    Id = inventory?.Id,
+                    NumberOfTraysSold = inventory?.NumberOfTraysSold,
+                    NumberOfTraysBroken = inventory?.NumberOfDamagedTrays,
+                    NumberOfTraysLeft = traysleft,
+                    Revenue = eggsSold.HasValue ==  true ? eggsSold.Value : 0,
+                    ProfitLoss = revenue.HasValue == true ? revenue.Value : 0,
+                });
             }
         }
 
