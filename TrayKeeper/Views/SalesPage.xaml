@@ -23,6 +23,7 @@
                               SeparatorVisibility="None">
                         <ListView.Header>
                             <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
+                                <Label Text="Batch" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="40" />
                                 <Label Text="Trays Sold" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
                                 <Label Text="Revenue" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="60" />
                                 <Label Text="Profit/Loss" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
@@ -34,11 +35,12 @@
                             <DataTemplate>
                                 <ViewCell>
                                     <StackLayout Orientation="Horizontal" Padding="10" Spacing="10" BackgroundColor="#303030">
+                                        <Label Text="{Binding InventoryNumber}" TextColor="#FFFFFF" WidthRequest="30" />
                                         <Label Text="{Binding NumberOfTraysSold}" TextColor="#FFFFFF" WidthRequest="50" />
                                         <Label Text="{Binding Revenue, StringFormat='${0:F2}'}" TextColor="#00FF00" WidthRequest="60" />
                                         <Label Text="{Binding ProfitLoss, StringFormat='${0:F2}'}" TextColor="#FFFFFF" WidthRequest="50" />
                                         <Label Text="{Binding NumberOfTraysLeft}" TextColor="#FFFFFF" WidthRequest="50" />
-                                        <Label Text="{Binding NumberOfTraysBroken}" TextColor="#FF0000" WidthRequest="50" />
+                                        <Label Text="{Binding NumberOfDamagedTrays}" TextColor="#FF0000" WidthRequest="50" />
                                     </StackLayout>
                                 </ViewCell>
                             </DataTemplate>

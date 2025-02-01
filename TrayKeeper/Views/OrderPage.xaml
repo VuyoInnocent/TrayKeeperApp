@@ -5,6 +5,7 @@
              Title="Orders"
              BackgroundColor="#000000">
     <ContentPage.Content>
+        <ScrollView>
         <Grid Padding="10" RowDefinitions="*,Auto,*">
             <StackLayout Grid.Row="1" Spacing="20">
                 
@@ -105,5 +106,6 @@
                         FontAttributes="Bold" />
             </StackLayout>
         </Grid>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>
