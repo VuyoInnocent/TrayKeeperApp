@@ -23,11 +23,11 @@
                               SeparatorVisibility="None">
                         <ListView.Header>
                             <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
-                                <Label Text="Batch" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="40" />
-                                <Label Text="Trays Sold" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
-                                <Label Text="Revenue" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="60" />
-                                <Label Text="Profit/Loss" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
-                                <Label Text="Trays Left" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="70" />
+                                <Label Text="#" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="30" />
+                                <Label Text="Trays Sold" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="40" />
+                                <Label Text="Revenue" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="70" />
+                                <Label Text="Profit/Loss" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="80" />
+                                <Label Text="Trays Left" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="45" />
                                 <Label Text="Trays Broken" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
                             </StackLayout>
                         </ListView.Header>
@@ -35,16 +35,26 @@
                             <DataTemplate>
                                 <ViewCell>
                                     <StackLayout Orientation="Horizontal" Padding="10" Spacing="10" BackgroundColor="#303030">
-                                        <Label Text="{Binding Id}" TextColor="#FFFFFF" WidthRequest="30" />
-                                        <Label Text="{Binding NumberOfTraysSold}" TextColor="#FFFFFF" WidthRequest="30" />
-                                        <Label Text="{Binding Revenue, StringFormat='R{0:F2}'}" TextColor="#00FF00" WidthRequest="50" />
-                                        <Label Text="{Binding ProfitLoss, StringFormat='R{0:F2}'}" TextColor="#FFFFFF" WidthRequest="30" />
-                                        <Label Text="{Binding NumberOfTraysLeft}" TextColor="#FFFFFF" WidthRequest="50" />
+                                        <Label Text="{Binding Id}" TextColor="#FFFFFF" WidthRequest="20" />
+                                        <Label Text="{Binding NumberOfTraysSold}" TextColor="#FFFFFF" WidthRequest="35" />
+                                        <Label Text="{Binding Revenue, StringFormat='R{0:F2}'}" TextColor="#00FF00" WidthRequest="60" />
+                                        <Label Text="{Binding ProfitLoss, StringFormat='R{0:F2}'}" TextColor="#FFFFFF" WidthRequest="70" />
+                                        <Label Text="{Binding NumberOfTraysLeft}" TextColor="#FFFFFF" WidthRequest="45" />
                                         <Label Text="{Binding NumberOfTraysBroken}" TextColor="#FF0000" WidthRequest="50" />
                                     </StackLayout>
                                 </ViewCell>
                             </DataTemplate>
                         </ListView.ItemTemplate>
+                        <ListView.Footer>
+                            <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
+                                <Label Text="Σ" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="25" />
+                                <Label Text="{Binding TotalTraysSold}" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
+                                <Label Text="{Binding TotalRevenue, StringFormat='R{0:F2}'}" TextColor="#00FF00" WidthRequest="70" />
+                                <Label Text="{Binding TotalProfitLoss, StringFormat='R{0:F2}'}" TextColor="#FFFFFF" WidthRequest="80" />
+                                <Label Text="{Binding TotalTraysLeft}" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="55" />
+                                <Label Text="{Binding TotalTraysBroken}" TextColor="#FF0000" FontAttributes="Bold" WidthRequest="50" />
+                            </StackLayout>
+                        </ListView.Footer>
                     </ListView>
                 </Frame>
 

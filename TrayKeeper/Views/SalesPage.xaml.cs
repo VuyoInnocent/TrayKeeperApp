@@ -10,4 +10,14 @@ public partial class SalesPage : ContentPage
 		BindingContext = salesViewModel;
 	}
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        var salesViewModel = BindingContext as SalesViewModel;
+
+        if (salesViewModel != null)
+        {
+            salesViewModel.LoadSalesDetails();
+        }
+    }
 }

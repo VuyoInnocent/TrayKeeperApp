@@ -38,7 +38,7 @@ namespace TrayKeeper.ViewModel
                 Date = Date
             };
 
-            if (string.IsNullOrWhiteSpace(NumberOfTraysBought+"") ||
+            if(string.IsNullOrWhiteSpace(NumberOfTraysBought+"") || NumberOfTraysBought <= 0||
              string.IsNullOrWhiteSpace(NumberOfDamagedTrays + "") ||
              string.IsNullOrWhiteSpace(NumberOfTraysSold + "") ||
              string.IsNullOrWhiteSpace(Date + ""))
@@ -84,7 +84,6 @@ namespace TrayKeeper.ViewModel
                 Console.WriteLine(ex.Message);
             }
         }
-
         public void clear()
         {
             InventoryNumber = 0;
