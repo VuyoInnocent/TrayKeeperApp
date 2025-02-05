@@ -5,8 +5,8 @@
              Title="Sales"
              BackgroundColor="#000000">
     <ContentPage.Content>
-        <Grid Padding="10" RowDefinitions="*,Auto,*">
-            <StackLayout  Spacing="20">
+        <!--<Grid Padding="10" RowDefinitions="*,Auto,*">-->
+        <StackLayout Padding="10" Spacing="20">
                 
                 <!-- Page Title -->
                 <Label Text="Sales Report" 
@@ -60,14 +60,15 @@
 
                 <!-- Action Buttons -->
                 <StackLayout Spacing="10">
-                    <Button Text="Generate Sales Report"
+                    
+                    <!--<Button Text="Generate Sales Report"
                             Command="{Binding GenerateSalesReportCommand}"
                             TextColor="#FFFFFF" 
                             BackgroundColor="#D5F8B020" 
                             CornerRadius="25" 
                             HeightRequest="50" 
                             FontSize="16" 
-                            FontAttributes="Bold" />
+                            FontAttributes="Bold" />-->
 
                     <Button Text="Export to Excel"
                             Command="{Binding ExportToExcelCommand}"
@@ -86,8 +87,9 @@
                             HeightRequest="50" 
                             FontSize="16" 
                             FontAttributes="Bold" />
+         
                 </StackLayout>
             </StackLayout>
-        </Grid>
+        <!--</Grid>-->
     </ContentPage.Content>
 </ContentPage>
