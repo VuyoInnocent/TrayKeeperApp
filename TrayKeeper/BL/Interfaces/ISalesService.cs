@@ -5,6 +5,6 @@ namespace TrayKeeper.BL.Interfaces
     public  interface ISalesService
     {
         Task<int> GenerateSalesReport();
-        Task<IEnumerable<Sales>> GetSales();
+        Task<IEnumerable<Inventory>> GetSales();
     }
 }
