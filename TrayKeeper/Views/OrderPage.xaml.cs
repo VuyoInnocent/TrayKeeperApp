@@ -5,10 +5,12 @@ namespace TrayKeeper.Views;
 
 public partial class OrderPage : ContentPage
 {
-	public OrderPage(OrderViewModel orderViewModel)
+    OrderViewModel _orderViewModel;
+
+    public OrderPage(OrderViewModel orderViewModel)
 	{
 		InitializeComponent();
-		BindingContext =  orderViewModel;
+		BindingContext = _orderViewModel = orderViewModel;
 	}
     private void OnOrderTapped(object sender, ItemTappedEventArgs e)
     {
@@ -21,7 +23,21 @@ public partial class OrderPage : ContentPage
             ((ListView)sender).SelectedItem = null;
         }
     }
-
+    private void OnClientNameTextChanged(object sender, TextChangedEventArgs e)
+    {
+     
+         _orderViewModel.ClientName = e.NewTextValue;
+        
+    }
+    private void OnClientNameSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.Count > 0)
+        {
+            var selectedClientName = e.CurrentSelection[0] as string;
+            _orderViewModel.ClientName = selectedClientName;
+            _orderViewModel.IsListVisible = false; 
+        }
+    }
     protected override void OnAppearing()
     {
         base.OnAppearing();
@@ -30,5 +46,10 @@ public partial class OrderPage : ContentPage
         if (orderViewModel != null) {
             orderViewModel.LoadOrders();
         }
+    }
+
+    private void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+
     }
 }

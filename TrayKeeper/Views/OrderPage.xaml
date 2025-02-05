@@ -60,10 +60,25 @@
                         <Entry Placeholder="Client Name" 
                                Text="{Binding ClientName, Mode=TwoWay}" 
                                PlaceholderColor="#B0B0B0"
-                               TextColor="#FFFFFF" />
+                               TextColor="#FFFFFF"
+                               TextChanged="OnClientNameTextChanged"/>
                     </Frame>
+                    
+                        <CollectionView ItemsSource="{Binding FilteredClientNames}" 
+                                        IsVisible="{Binding IsListVisible}" 
+                                        Margin="0,5,0,0"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnClientNameSelected">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="#404040" Padding="10" Margin="0,0,0,5" CornerRadius="8">
+                                        <Label Text="{Binding}" TextColor="#FFFFFF" />
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
 
-                    <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
+                        <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
                         <Entry Placeholder="Cellphone" 
                                Text="{Binding Cellphone, Mode=TwoWay}" 
                                PlaceholderColor="#B0B0B0"

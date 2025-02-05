@@ -4,12 +4,10 @@ namespace TrayKeeper.Views;
 
 public partial class SalesPage : ContentPage
 {
-    SalesViewModel _salesViewModel;
-
     public SalesPage(SalesViewModel salesViewModel)
 	{
 		InitializeComponent();
-		BindingContext = _salesViewModel = salesViewModel;
+		BindingContext = salesViewModel;
 	}
 
     protected override void OnAppearing()
