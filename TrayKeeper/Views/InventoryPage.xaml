@@ -16,14 +16,14 @@
                        HorizontalOptions="Center" />
 
                     <!-- ListView -->
-                    <Frame BackgroundColor="#303030" CornerRadius="12" HasShadow="True">
+                    <Frame BackgroundColor="#303030" HeightRequest="250"  CornerRadius="12" HasShadow="True">
                         <ListView ItemsSource="{Binding InventoryRecords}" BackgroundColor="Transparent" SeparatorVisibility="None">
                             <ListView.Header>
                                 <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
-                                    <Label Text="Batch" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="40" />
+                                    <Label Text="Batch" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
                                     <Label Text="Date" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="80" />
                                     <Label Text="Bought" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="60" />
-                                    <Label Text="Damaged" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="70" />
+                                    <Label Text="Damaged" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="75" />
                                     <Label Text="Sold" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="60" />
                                 </StackLayout>
                             </ListView.Header>
@@ -31,10 +31,10 @@
                                 <DataTemplate>
                                     <ViewCell>
                                         <StackLayout Orientation="Horizontal" Padding="10" Spacing="10" BackgroundColor="#303030">
-                                            <Label Text="{Binding InventoryNumber}" TextColor="#FFFFFF" WidthRequest="30" />
+                                            <Label Text="{Binding InventoryNumber}" TextColor="#FFFFFF" WidthRequest="40" />
                                             <Label Text="{Binding Date, StringFormat='{0:dd/MM/yyyy}'}" TextColor="#FFFFFF" WidthRequest="70" />
                                             <Label Text="{Binding NumberOfTraysBought}" TextColor="#FFFFFF" WidthRequest="50" />
-                                            <Label Text="{Binding NumberOfDamagedTrays}" TextColor="#FFFFFF" WidthRequest="60" />
+                                            <Label Text="{Binding NumberOfDamagedTrays}" TextColor="#FFFFFF" WidthRequest="65" />
                                             <Label Text="{Binding NumberOfTraysSold}" TextColor="#FFFFFF" WidthRequest="50" />
                                         </StackLayout>
                                     </ViewCell>

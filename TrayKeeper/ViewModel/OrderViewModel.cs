@@ -153,11 +153,14 @@ namespace TrayKeeper.ViewModel
             get => _clientName;
             set
             {
-                if (_clientName != value && value.Length > 2)
+                if (value != null && value.Length > 2)
                 {
                     _clientName = value;
                     OnPropertyChanged(nameof(ClientName));
                     FilterClientNames();
+                }
+                else {
+                    IsListVisible = false;
                 }
              
             }
@@ -231,4 +234,5 @@ namespace TrayKeeper.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+ 
 }

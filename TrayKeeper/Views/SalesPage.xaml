@@ -16,7 +16,7 @@
                        HorizontalOptions="Center" />
 
                 <!-- Sales ListView -->
-                <Frame  BackgroundColor="#303030" CornerRadius="12" HasShadow="True">
+            <Frame  BackgroundColor="#303030" HeightRequest="500"  CornerRadius="12" HasShadow="True">
                     <ListView x:Name="SalesListView"
                               ItemsSource="{Binding SalesDetails}" 
                               BackgroundColor="Transparent"
