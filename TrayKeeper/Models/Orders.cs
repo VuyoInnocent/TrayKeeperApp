@@ -4,6 +4,7 @@
     {
         [SQLite.PrimaryKey]
         public int? Id { get; set; }
+        public int? BatchNumber { get; set; }
         public  string ClientName { get; set; }
         public  string Cellphone { get; set; }
         public  string Location { get; set; }

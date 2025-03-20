@@ -74,9 +74,9 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <ViewCell>
-                                            <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#303030">
+                                            <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#FFFFFF">
                                                 <Label Text="{Binding ClientName}" 
-                                                   TextColor="#FFFFFF" />
+                                                   TextColor="#303030" />
                                             </StackLayout>
                                         </ViewCell>
                                     </DataTemplate>

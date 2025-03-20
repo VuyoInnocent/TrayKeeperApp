@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using TrayKeeper.BL.Interfaces;
+using TrayKeeper.Helpers;
 using TrayKeeper.Models;
 using TrayKeeper.Views;
 
@@ -38,6 +39,8 @@ namespace TrayKeeper.ViewModel
                 NumberOfTraysBought = NumberOfTraysBought,
                 NumberOfDamagedTrays = NumberOfDamagedTrays,
                 NumberOfTraysSold = NumberOfTraysSold,
+                TrayCostPrice = Constants.TrayCostPrice,
+                TraySellingPrice = Constants.TraySellingPrice,
                 Date = Date
             };
 

@@ -8,6 +8,8 @@
         public int? NumberOfTraysBought { get; set; }
         public int? NumberOfDamagedTrays { get; set; }
         public int? NumberOfTraysSold { get; set; }
+        public decimal? TraySellingPrice { get; set; }
+        public decimal? TrayCostPrice { get; set; }
         public DateTime? Date { get; set; }
     }
 }

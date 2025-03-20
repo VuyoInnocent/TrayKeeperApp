@@ -80,6 +80,9 @@ namespace TrayKeeper.ViewModel
                 existingBatch.NumberOfTraysBought = existingBatch.NumberOfTraysBought - newOrder.NumberTraysBought;
                 existingBatch.NumberOfTraysSold += newOrder.NumberTraysBought;
 
+                //BatchNumber order is placed from 
+                newOrder.BatchNumber = inventoryId;
+
                 await _orderService.AddOrder(newOrder);
                 await _inventoryService.UpdateInventory(existingBatch);
                 LoadOrders();
@@ -135,6 +138,7 @@ namespace TrayKeeper.ViewModel
             {
                 List<Orders> filtered = Orders
                     .Where(name => name.ClientName.ToLower().Contains(ClientName.ToLower()))
+                    .DistinctBy(order => order.ClientName, StringComparer.OrdinalIgnoreCase)
                     .ToList();
                 FilteredClientNames.Clear();
                 foreach (var item in filtered)

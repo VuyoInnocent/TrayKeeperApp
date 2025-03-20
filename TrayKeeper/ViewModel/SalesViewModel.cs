@@ -15,6 +15,7 @@ namespace TrayKeeper.ViewModel
     public class SalesViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Sales> SalesDetails { get; set; }
+        private readonly IOrderService _orderService;
         private readonly ISalesService _salesService;
         private readonly IInventoryService _inventoryService;
         private int? _totalTraysSold;
@@ -25,9 +26,11 @@ namespace TrayKeeper.ViewModel
         public ICommand ExportToExcelCommand { get; }
         public ICommand ExportToPdfCommand { get; }
         public ICommand GenerateSalesReportCommand { get; }
-        public  SalesViewModel(ISalesService salesService, IInventoryService inventoryService)
+        public  SalesViewModel(ISalesService salesService,
+            IInventoryService inventoryService,IOrderService orderService)
         {
             _salesService = salesService;
+            _orderService = orderService;
             _inventoryService = inventoryService;
             SalesDetails = new ObservableCollection<Sales>();
             //GenerateSalesReportCommand = new Command(GenerateReport);
@@ -43,13 +46,21 @@ namespace TrayKeeper.ViewModel
         public async void LoadSalesDetails()
         {
             var inventories = await _inventoryService.GetInventory();
+            var orders = await _orderService.GetOrders();
             SalesDetails.Clear();
+
             foreach (var inventory in inventories)
             {
-                var batchPrice =  inventory.NumberOfTraysBought * Constants.TrayCostPrice;
+                var paidOrders = orders
+                    .Where(order => order.BatchNumber == inventory.Id && order.IsPaid)
+                    .Select(order => order.NumberTraysBought)
+                    .Sum();
+
+                var batchPrice =  inventory.NumberOfTraysBought * inventory?.TrayCostPrice;
                 var traysleft = (inventory?.NumberOfTraysBought + inventory?.NumberOfTraysSold) - inventory?.NumberOfTraysSold;
-                decimal? eggsSold = inventory?.NumberOfTraysSold * Constants.TraySellingPrice;
+                decimal? eggsSold = paidOrders * inventory?.TraySellingPrice;
                 var profitloss = eggsSold - batchPrice;
+
 
                 SalesDetails.Add(new Sales{
                     Id = inventory?.Id,
@@ -60,6 +71,7 @@ namespace TrayKeeper.ViewModel
                     ProfitLoss = profitloss.HasValue == true ? profitloss.Value : 0,
                 });
             }
+
 
             TotalTraysSold = SalesDetails.Sum(s => s.NumberOfTraysSold);
             TotalRevenue = SalesDetails.Sum(s => s.Revenue);
