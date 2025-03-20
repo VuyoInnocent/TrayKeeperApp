@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using TrayKeeper.BL.Interfaces;
 using TrayKeeper.Models;
+using TrayKeeper.Views;
 
 namespace TrayKeeper.ViewModel
 {
@@ -18,10 +19,12 @@ namespace TrayKeeper.ViewModel
         public int _numberOfTraysSold;
         public DateTime _date;
         public ICommand SaveInventoryCommand { get; }
+        public ICommand EditInventoryCommand { get; }
         public InventoryViewModel(IInventoryService inventoryService)
         {
             InventoryRecords = new ObservableCollection<Inventory>();
             SaveInventoryCommand = new Command(SaveInventory);
+            EditInventoryCommand = new Command<Inventory>(OnEditInventory);
             _inventoryService = inventoryService;
             Date = DateTime.Now;
 
@@ -66,6 +69,14 @@ namespace TrayKeeper.ViewModel
             LoadInventory();
 
 
+        }
+        private async void OnEditInventory(Inventory inventory)
+        {
+            if (inventory == null) return;
+
+            var editPage = new EditInventoryPage(_inventoryService,inventory, LoadInventory);
+
+            await Application.Current.MainPage.Navigation.PushAsync(editPage);
         }
         public async void LoadInventory()
         {

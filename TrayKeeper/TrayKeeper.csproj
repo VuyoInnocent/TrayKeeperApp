@@ -72,6 +72,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\EditInventoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\InventoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -94,6 +97,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\EditInventoryPage.xaml.cs">
+	    <DependentUpon>EditInventoryPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\InventoryPage.xaml.cs">
 	    <DependentUpon>InventoryPage.xaml</DependentUpon>
 	  </Compile>

@@ -29,15 +29,6 @@ public partial class OrderPage : ContentPage
          _orderViewModel.ClientName = e.NewTextValue;
         
     }
-    private void OnClientNameSelected(object sender, SelectionChangedEventArgs e)
-    {
-        if (e.CurrentSelection.Count > 0)
-        {
-            var selectedClientName = e.CurrentSelection[0] as string;
-            _orderViewModel.ClientName = selectedClientName;
-            _orderViewModel.IsListVisible = false; 
-        }
-    }
     protected override void OnAppearing()
     {
         base.OnAppearing();
@@ -47,5 +38,14 @@ public partial class OrderPage : ContentPage
             orderViewModel.LoadOrders();
         }
     }
-
+    private void OnClientNameSelected(object sender, ItemTappedEventArgs e)
+    {
+        if (e.Item is Orders selectedOrder)
+        {
+            _orderViewModel.Location = selectedOrder.Location;
+            _orderViewModel.Cellphone = selectedOrder.Cellphone;
+            _orderViewModel.ClientName = selectedOrder.ClientName;
+            _orderViewModel.IsListVisible = false;
+        }
+    }
 }

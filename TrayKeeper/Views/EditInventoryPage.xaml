@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrayKeeper.Views.EditInventoryPage"
+             Title="Edit Inventory"
+             BackgroundColor="#000000">
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid Padding="20" RowDefinitions="*,Auto,*">
+                <StackLayout Grid.Row="1" Spacing="20">
+
+                    <Label Text="Edit Inventory" 
+                           FontSize="24" 
+                           FontAttributes="Bold" 
+                           TextColor="#D5F8B0" 
+                           HorizontalOptions="Center" />
+
+                    <!-- Input Fields -->
+                    <StackLayout Spacing="10">
+                        <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
+                            <Entry Placeholder="Number of Trays Bought" 
+                                   Text="{Binding NumberOfTraysBought, Mode=TwoWay}" 
+                                   Keyboard="Numeric" 
+                                   PlaceholderColor="#B0B0B0"
+                                   TextColor="#FFFFFF" />
+                        </Frame>
+
+                        <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
+                            <Entry Placeholder="Number of Damaged Trays" 
+                                   Text="{Binding NumberOfDamagedTrays, Mode=TwoWay}" 
+                                   Keyboard="Numeric" 
+                                   PlaceholderColor="#B0B0B0"
+                                   TextColor="#FFFFFF" />
+                        </Frame>
+
+                        <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
+                            <Entry Placeholder="Number of Trays Sold" 
+                                   Text="{Binding NumberOfTraysSold, Mode=TwoWay}" 
+                                   Keyboard="Numeric" 
+                                   PlaceholderColor="#B0B0B0"
+                                   TextColor="#FFFFFF" />
+                        </Frame>
+
+                        <Label Text="Date:" TextColor="#D5F8B0" FontSize="16" />
+                        <DatePicker x:Name="DateEntry" 
+                                    Date="{Binding Date, Mode=TwoWay}" 
+                                    TextColor="#FFFFFF" />
+                    </StackLayout>
+
+                    <!-- Save Button -->
+                    <Button Text="Save Inventory"
+                            Command="{Binding SaveInventoryCommand}"
+                            TextColor="#FFFFFF" 
+                            BackgroundColor="#D5F8B020" 
+                            CornerRadius="25" 
+                            HeightRequest="50" 
+                            FontSize="16" 
+                            FontAttributes="Bold" />
+                </StackLayout>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

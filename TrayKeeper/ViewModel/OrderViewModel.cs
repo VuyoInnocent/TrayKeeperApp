@@ -12,7 +12,7 @@ namespace TrayKeeper.ViewModel
     public class OrderViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Orders> Orders { get; set; }
-        private ObservableCollection<string> _filteredClientNames;
+        public ObservableCollection<Orders> FilteredClientNames { get; set; }
         private readonly IInventoryService _inventoryService;
         private ObservableCollection<string> _inventoryNumbers;
         private readonly IOrderService _orderService;
@@ -29,7 +29,7 @@ namespace TrayKeeper.ViewModel
         {
             Orders = new ObservableCollection<Orders>();
             _inventoryNumbers = new ObservableCollection<string>();
-            FilteredClientNames = new ObservableCollection<string>(Orders.Select(x => x.ClientName));
+            FilteredClientNames = new ObservableCollection<Orders>();
             AddOrderCommand = new Command(AddOrder);
             EditOrderCommand = new Command<Orders>(OnEditOrder);
             _inventoryService = inventoryService;
@@ -128,16 +128,20 @@ namespace TrayKeeper.ViewModel
         {
             if (string.IsNullOrWhiteSpace(ClientName))
             {
-                FilteredClientNames = new ObservableCollection<string>(Orders.Select(x => x.ClientName));
+                FilteredClientNames = Orders;
                 IsListVisible = false; // Hide the list if input is empty
             }
             else
             {
-                var filtered = Orders.Select(x => x.ClientName)
-                    .Where(name => name.ToLower().Contains(ClientName.ToLower()))
+                List<Orders> filtered = Orders
+                    .Where(name => name.ClientName.ToLower().Contains(ClientName.ToLower()))
                     .ToList();
-
-                FilteredClientNames = new ObservableCollection<string>(filtered);
+                FilteredClientNames.Clear();
+                foreach (var item in filtered)
+                {
+                    FilteredClientNames.Add(item);
+                }
+                 
                 IsListVisible = filtered.Any(); // Show the list if there are results
             }
         }
@@ -160,6 +164,8 @@ namespace TrayKeeper.ViewModel
                     FilterClientNames();
                 }
                 else {
+                    Cellphone = string.Empty;    // Clear Cellphone
+                    Location = string.Empty;      // Clear Location
                     IsListVisible = false;
                 }
              
@@ -208,15 +214,6 @@ namespace TrayKeeper.ViewModel
             {
                 _inventoryNumbers = value;
                 OnPropertyChanged(nameof(InventoryNumber));
-            }
-        }
-        public ObservableCollection<string> FilteredClientNames
-        {
-            get => _filteredClientNames;
-            set
-            {
-                _filteredClientNames = value;
-                OnPropertyChanged(nameof(FilteredClientNames));
             }
         }
         public string SelectedBatchNumber
