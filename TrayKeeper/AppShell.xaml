@@ -63,6 +63,10 @@
         <ShellContent ContentTemplate="{DataTemplate local:SalesPage}" />
     </FlyoutItem>
 
+    <FlyoutItem Title="Records" IsVisible="{Binding IsLoggedIn}">
+        <ShellContent ContentTemplate="{DataTemplate local:OrdersHistoryPage}" />
+    </FlyoutItem>
+
     <FlyoutItem Title="Settings" IsVisible="{Binding IsLoggedIn}">
         <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" />
     </FlyoutItem>
