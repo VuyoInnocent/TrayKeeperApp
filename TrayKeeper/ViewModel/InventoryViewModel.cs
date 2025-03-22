@@ -88,7 +88,7 @@ namespace TrayKeeper.ViewModel
                 var inventory = await _inventoryService.GetInventory();
 
                 InventoryRecords.Clear();
-                foreach (var inventoryItem in inventory)
+                foreach (var inventoryItem in inventory.Where(x => x?.NumberOfTraysBought > 0))
                 {
                     InventoryRecords.Add(inventoryItem);
                 }

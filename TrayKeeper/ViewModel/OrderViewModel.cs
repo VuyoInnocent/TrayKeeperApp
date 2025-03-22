@@ -113,7 +113,7 @@ namespace TrayKeeper.ViewModel
             var inventory = await _inventoryService.GetInventory();
             Orders.Clear();
             _inventoryNumbers.Clear();
-            foreach (var order in orders)
+            foreach (var order in orders.Where(x => x.IsPaid == false || x.IsCollected == false))
             {
                 Orders.Add(order);
             }
