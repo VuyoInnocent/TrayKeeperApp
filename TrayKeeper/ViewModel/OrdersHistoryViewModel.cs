@@ -11,7 +11,7 @@ namespace TrayKeeper.ViewModel
         public ObservableCollection<Orders> Orders { get; set; }
         private ObservableCollection<Orders> _filteredOrders;
         private IOrderService _orderService;
-        private string _filterBatchNumber;
+        private string? _filterBatchNumber;
         private string _filterClientName;
         private DateTime _filterOrderDate;
         private bool _isNoOrdersFound;
@@ -22,7 +22,8 @@ namespace TrayKeeper.ViewModel
             ApplyFiltersCommand = new Command(ApplyFilters);
             ClearFiltersCommand = new Command(ClearFilters);
             RefreshCommand = new Command(RefreshOrders);
-            FilterOrderDate = DateTime.Now;
+            SetTodayCommand = new Command(() => FilterOrderDate = DateTime.Today);
+            FilterOrderDate = DateTime.MinValue;
             _orderService = orderService;
             LoadOrders();
         }
@@ -39,11 +40,12 @@ namespace TrayKeeper.ViewModel
         }
         private void ApplyFilters()
         {
+
             var filtered = Orders.Where(o =>
-                (string.IsNullOrEmpty(FilterBatchNumber) || o.BatchNumber.ToString().Contains(FilterBatchNumber, StringComparison.OrdinalIgnoreCase)))
-                .Where(o => (string.IsNullOrEmpty(FilterClientName) || o.ClientName.Contains(FilterClientName, StringComparison.OrdinalIgnoreCase)))
-                .Where(o => (FilterOrderDate == DateTime.MinValue || o.DateOrdered.Date == FilterOrderDate.Date))
-                .ToList();
+                      (string.IsNullOrEmpty(FilterBatchNumber) || o.BatchNumber.ToString().Contains(FilterBatchNumber.Trim(), StringComparison.OrdinalIgnoreCase)))
+                      .Where(o => (string.IsNullOrEmpty(FilterClientName) || o.ClientName.Contains(FilterClientName.Trim(), StringComparison.OrdinalIgnoreCase)))
+                      .Where(o => (FilterOrderDate == DateTime.MinValue || o.DateOrdered.Date == FilterOrderDate.Date))
+                      .ToList();
 
             FilteredOrders = new ObservableCollection<Orders>(filtered);
             IsNoOrdersFound = FilteredOrders.Count == 0;
@@ -74,7 +76,7 @@ namespace TrayKeeper.ViewModel
                 OnPropertyChanged(nameof(FilteredOrders));
             }
         }
-        public string FilterBatchNumber
+        public string? FilterBatchNumber
         {
             get => _filterBatchNumber;
             set
@@ -113,6 +115,7 @@ namespace TrayKeeper.ViewModel
         public ICommand ApplyFiltersCommand { get; }
         public ICommand ClearFiltersCommand { get; }
         public ICommand RefreshCommand { get; }
+        public ICommand SetTodayCommand { get; }
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {

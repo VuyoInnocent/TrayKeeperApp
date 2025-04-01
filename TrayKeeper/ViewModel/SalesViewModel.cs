@@ -16,7 +16,6 @@ namespace TrayKeeper.ViewModel
     {
         public ObservableCollection<Sales> SalesDetails { get; set; }
         private readonly IOrderService _orderService;
-        private readonly ISalesService _salesService;
         private readonly IInventoryService _inventoryService;
         private int? _totalTraysSold;
         private decimal? _totalRevenue;
@@ -25,23 +24,81 @@ namespace TrayKeeper.ViewModel
         private int? _totalTraysBroken;
         public ICommand ExportToExcelCommand { get; }
         public ICommand ExportToPdfCommand { get; }
-        public ICommand GenerateSalesReportCommand { get; }
+        public ICommand ExportOrdersToExcelCommand { get; }
         public  SalesViewModel(ISalesService salesService,
             IInventoryService inventoryService,IOrderService orderService)
         {
-            _salesService = salesService;
             _orderService = orderService;
             _inventoryService = inventoryService;
             SalesDetails = new ObservableCollection<Sales>();
-            //GenerateSalesReportCommand = new Command(GenerateReport);
+            ExportOrdersToExcelCommand = new Command(ExportOrdersToExcelCommandAsync);
             ExportToExcelCommand = new Command(ExportToExcelAsync);
             ExportToPdfCommand = new Command(ExportToPdf);
             LoadSalesDetails();
         }
-        public async void GenerateReport()
+        public async void ExportOrdersToExcelCommandAsync()
         {
-            await _salesService.GenerateSalesReport();
-            LoadSalesDetails();
+            // Set the LicenseContext for EPPlus
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
+            try
+            {
+                var ordersList = await _orderService.GetOrders();
+                // Use EPPlus to create an Excel file
+                using (var package = new ExcelPackage())
+                {
+                    var worksheet = package.Workbook.Worksheets.Add("Orders Report");
+                    worksheet.Cells[1, 1].Value = "Client Name";
+                    worksheet.Cells[1, 2].Value = "Trays bought";
+                    worksheet.Cells[1, 3].Value = "Date";
+                    worksheet.Cells[1, 4].Value = "Paid?";
+                    worksheet.Cells[1, 5].Value = "Collected?";
+
+                    int row = 2;
+                    foreach (var orders in ordersList)
+                    {
+                        worksheet.Cells[row, 1].Value = orders.ClientName;
+                        worksheet.Cells[row, 2].Value = orders.NumberTraysBought;
+                        worksheet.Cells[row, 3].Value = orders.DateOrdered.ToShortDateString();
+                        worksheet.Cells[row, 4].Value = orders.IsPaid ? "Paid" : "Not Paid";
+                        worksheet.Cells[row, 5].Value = orders.IsCollected ? "Yes" : "No";
+                        row++;
+                    }
+
+                    // Optionally, you can format the total row
+                    using (var range = worksheet.Cells[row, 1, row, 5])
+                    {
+                        range.Style.Font.Bold = true; // Make the total row bold
+                        range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray); // Set background color
+                    }
+
+                    // Ensure the directory exists
+                    var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    var directoryPath = Path.Combine(documentsPath, "OrdersReports");
+                    Directory.CreateDirectory(directoryPath); // Create the directory if it doesn't exist
+
+                    var filePath = Path.Combine(directoryPath, $"{DateTime.Now:yyyy-MM-dd HH-mm-ss} OrdersReports.xlsx");
+
+                    // Save the Excel file
+                    var fileBytes = package.GetAsByteArray();
+                    await File.WriteAllBytesAsync(filePath, fileBytes);
+
+                    // Show success toast
+                    var successMessage = $"Export successful! Sales report saved to {filePath}";
+                    var toast = Toast.Make(successMessage, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
+                    await toast.Show();
+
+                    await PreviewFile(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Show error toast with detailed message
+                var errorMessage = $"Export failed: {ex.Message}";
+                var toast = Toast.Make(errorMessage, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
+                await toast.Show();
+            }
         }
         public async void LoadSalesDetails()
         {

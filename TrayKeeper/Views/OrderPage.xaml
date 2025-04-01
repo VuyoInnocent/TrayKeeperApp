@@ -23,32 +23,35 @@
                               SeparatorVisibility="None"
                               SelectedItem="{Binding SelectedOrder, Mode=TwoWay}"
                               ItemTapped="OnOrderTapped"
-                              BackgroundColor="Transparent">
+                              BackgroundColor="Transparent"
+                              HasUnevenRows="True">
                         <ListView.Header>
-                            <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
-                                <Label Text="Client" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
-                                <Label Text="Bought" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="80" />
+                            <StackLayout Orientation="Horizontal" BackgroundColor="#404040">
+                                <Label Text="Client" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="100" />
                                 <Label Text="Details" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="150" />
                             </StackLayout>
                         </ListView.Header>
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell>
-                                    <StackLayout Orientation="Horizontal" HeightRequest="70" Padding="10" Spacing="10" BackgroundColor="#303030">
-                                        <Label Text="{Binding ClientName}" 
+                                        <Border Stroke="#D5F8B0" 
+                                                StrokeThickness="1" 
+                                                StrokeShape="RoundRectangle 8"
+                                                BackgroundColor="#303030">
+                                            <StackLayout Orientation="Horizontal" HeightRequest="80" Padding="10"  BackgroundColor="#303030">
+                                            <Label Text="{Binding ClientName}" 
                                                TextColor="#FFFFFF" 
-                                               WidthRequest="40" FontSize="Medium"/>
-                                               <Label Text="{Binding NumberTraysBought, StringFormat='Bought: {0}'}" 
-                                               TextColor="#00FF00" 
-                                               WidthRequest="70" FontSize="Medium"/>
-                                               <Label Text="{Binding FormattedDetails}" 
+                                               WidthRequest="80" FontSize="Medium"/>
+                                            <Label Text="{Binding FormattedDetails}" 
                                                FontSize="Medium"
                                                TextColor="#FFFFFF" 
                                                MaxLines="2" 
-                                               HeightRequest="100" 
-                                               VerticalOptions="Start" />
-                                    </StackLayout>
-                                </ViewCell>
+                                               LineBreakMode="WordWrap"
+                                               VerticalOptions="Fill"
+                                               VerticalTextAlignment="Start"/>
+                                            </StackLayout>
+                                        </Border>
+                                    </ViewCell>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
