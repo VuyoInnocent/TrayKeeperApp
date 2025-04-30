@@ -6,7 +6,7 @@
              BackgroundColor="#000000">
     <ContentPage.Content>
         <Grid Padding="20" RowDefinitions="*,Auto,*">
-            <StackLayout Grid.Row="1" Spacing="20">
+            <StackLayout  Spacing="20">
                 
                 <!-- Page Title -->
                 <Label Text="Settings" 

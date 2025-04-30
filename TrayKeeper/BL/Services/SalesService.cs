@@ -63,9 +63,10 @@ namespace TrayKeeper.BL
             return result.Sum(i => i.NumberOfDamagedTrays.GetValueOrDefault());
 
         }
-        public async Task<IEnumerable<Sales>> GetSales()
+        public async Task<IEnumerable<Inventory>> GetSales()
         {
-            return await _salesRepository.GetAllAsync();
+            return await _inventoryRepository.GetAllAsync();
         }
+
     }
 }

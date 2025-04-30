@@ -27,6 +27,7 @@ PasswordHash text NOT NULL );";
         public static string createOrdersTable =
 @"CREATE TABLE [Orders] (
 Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+BatchNumber INTEGER NOT NULL,
 ClientName TEXT NOT NULL,
 Cellphone TEXT NOT NULL,
 Location TEXT NOT NULL,
@@ -52,6 +53,8 @@ InventoryNumber INTEGER NULL,
 NumberOfTraysBought INTEGER NULL,
 NumberOfDamagedTrays INTEGER NULL,
 NumberOfTraysSold INTEGER NULL,
+TraySellingPrice DECIMAL(18, 2) NOT NULL,
+TrayCostPrice DECIMAL(18, 2) NOT NULL,
 Date DATETIME NULL );";
 
     }

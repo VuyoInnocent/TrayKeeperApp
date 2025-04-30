@@ -12,27 +12,29 @@ namespace TrayKeeper.ViewModel
     public class OrderViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Orders> Orders { get; set; }
+        public ObservableCollection<Orders> FilteredClientNames { get; set; }
         private readonly IInventoryService _inventoryService;
         private ObservableCollection<string> _inventoryNumbers;
         private readonly IOrderService _orderService;
         private string? _selectedBatchNumber;
         private int? _numberTraysBought;
+        private bool _isListVisible;
         private string? _clientName;
         private string? _cellphone;
         private string? _location;
-
-
+   
         public ICommand AddOrderCommand { get; }
         public ICommand EditOrderCommand { get; }
         public OrderViewModel(IOrderService orderService, IInventoryService inventoryService)
         {
             Orders = new ObservableCollection<Orders>();
             _inventoryNumbers = new ObservableCollection<string>();
+            FilteredClientNames = new ObservableCollection<Orders>();
             AddOrderCommand = new Command(AddOrder);
             EditOrderCommand = new Command<Orders>(OnEditOrder);
             _inventoryService = inventoryService;
             _orderService = orderService;
-
+            IsListVisible = false;
             LoadOrders();
         }
         public async void AddOrder()
@@ -78,6 +80,9 @@ namespace TrayKeeper.ViewModel
                 existingBatch.NumberOfTraysBought = existingBatch.NumberOfTraysBought - newOrder.NumberTraysBought;
                 existingBatch.NumberOfTraysSold += newOrder.NumberTraysBought;
 
+                //BatchNumber order is placed from 
+                newOrder.BatchNumber = inventoryId;
+
                 await _orderService.AddOrder(newOrder);
                 await _inventoryService.UpdateInventory(existingBatch);
                 LoadOrders();
@@ -108,7 +113,7 @@ namespace TrayKeeper.ViewModel
             var inventory = await _inventoryService.GetInventory();
             Orders.Clear();
             _inventoryNumbers.Clear();
-            foreach (var order in orders)
+            foreach (var order in orders.Where(x => x.IsPaid == false || x.IsCollected == false))
             {
                 Orders.Add(order);
             }
@@ -120,6 +125,28 @@ namespace TrayKeeper.ViewModel
                     _inventoryNumbers.Add(item.InventoryNumber + "");
                 }
           
+            }
+        }
+        private void FilterClientNames()
+        {
+            if (string.IsNullOrWhiteSpace(ClientName))
+            {
+                FilteredClientNames = Orders;
+                IsListVisible = false; // Hide the list if input is empty
+            }
+            else
+            {
+                List<Orders> filtered = Orders
+                    .Where(name => name.ClientName.ToLower().Contains(ClientName.ToLower()))
+                    .DistinctBy(order => order.ClientName, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+                FilteredClientNames.Clear();
+                foreach (var item in filtered)
+                {
+                    FilteredClientNames.Add(item);
+                }
+                 
+                IsListVisible = filtered.Any(); // Show the list if there are results
             }
         }
         public void clear()
@@ -134,8 +161,18 @@ namespace TrayKeeper.ViewModel
             get => _clientName;
             set
             {
-                _clientName = value;
-                OnPropertyChanged(nameof(ClientName));
+                if (value != null && value.Length > 2)
+                {
+                    _clientName = value;
+                    OnPropertyChanged(nameof(ClientName));
+                    FilterClientNames();
+                }
+                else {
+                    Cellphone = string.Empty;    // Clear Cellphone
+                    Location = string.Empty;      // Clear Location
+                    IsListVisible = false;
+                }
+             
             }
         }
         public string Cellphone
@@ -165,6 +202,15 @@ namespace TrayKeeper.ViewModel
                 OnPropertyChanged(nameof(NumberOfTraysBought));
             }
         }
+        public bool IsListVisible
+        {
+            get => _isListVisible;
+            set
+            {
+                _isListVisible = value;
+                OnPropertyChanged(nameof(IsListVisible));
+            }
+        }
         public ObservableCollection<string> InventoryNumber
         {
             get => _inventoryNumbers;
@@ -189,4 +235,5 @@ namespace TrayKeeper.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+ 
 }

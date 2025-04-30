@@ -4,6 +4,7 @@
     {
         [SQLite.PrimaryKey]
         public int? Id { get; set; }
+        public int? BatchNumber { get; set; }
         public  string ClientName { get; set; }
         public  string Cellphone { get; set; }
         public  string Location { get; set; }
@@ -16,8 +17,8 @@
         {
             get
             {
-                return $"Date: {DateOrdered.ToShortDateString()} : {(IsPaid ? "Paid" : "Not Paid")}" +"\n"+
-                       $"Collected: {(IsCollected ? "Yes" : "No")}";
+                return $"#: {NumberTraysBought} : Date: {DateOrdered.ToShortDateString()} \n" +
+                       $" {(IsPaid ? "Paid" : "Not Paid")} : Collected: {(IsCollected ? "Yes" : "No")}";
             }
         }
     }

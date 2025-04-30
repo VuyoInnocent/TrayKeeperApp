@@ -44,6 +44,7 @@ namespace TrayKeeper
             builder.Services.AddSingleton<ISalesService, SalesService>();
 
             //ViewModels
+            builder.Services.AddTransient<OrdersHistoryViewModel>();
             builder.Services.AddTransient<InventoryViewModel>();
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<OrderViewModel>();
@@ -51,6 +52,7 @@ namespace TrayKeeper
             builder.Services.AddTransient<AppViewModel>();
 
             //Views
+            builder.Services.AddTransient<OrdersHistoryPage>();
             builder.Services.AddTransient<InventoryPage>();
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<OrderPage>();

@@ -103,6 +103,7 @@ namespace TrayKeeper.ViewModel
             }
         }
         public ICommand SaveCommand { get; }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {

@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using TrayKeeper.BL.Interfaces;
+using TrayKeeper.Helpers;
 using TrayKeeper.Models;
+using TrayKeeper.Views;
 
 namespace TrayKeeper.ViewModel
 {
@@ -18,10 +20,12 @@ namespace TrayKeeper.ViewModel
         public int _numberOfTraysSold;
         public DateTime _date;
         public ICommand SaveInventoryCommand { get; }
+        public ICommand EditInventoryCommand { get; }
         public InventoryViewModel(IInventoryService inventoryService)
         {
             InventoryRecords = new ObservableCollection<Inventory>();
             SaveInventoryCommand = new Command(SaveInventory);
+            EditInventoryCommand = new Command<Inventory>(OnEditInventory);
             _inventoryService = inventoryService;
             Date = DateTime.Now;
 
@@ -35,10 +39,12 @@ namespace TrayKeeper.ViewModel
                 NumberOfTraysBought = NumberOfTraysBought,
                 NumberOfDamagedTrays = NumberOfDamagedTrays,
                 NumberOfTraysSold = NumberOfTraysSold,
+                TrayCostPrice = Constants.TrayCostPrice,
+                TraySellingPrice = Constants.TraySellingPrice,
                 Date = Date
             };
 
-            if (string.IsNullOrWhiteSpace(NumberOfTraysBought+"") ||
+            if(string.IsNullOrWhiteSpace(NumberOfTraysBought+"") || NumberOfTraysBought <= 0||
              string.IsNullOrWhiteSpace(NumberOfDamagedTrays + "") ||
              string.IsNullOrWhiteSpace(NumberOfTraysSold + "") ||
              string.IsNullOrWhiteSpace(Date + ""))
@@ -67,6 +73,14 @@ namespace TrayKeeper.ViewModel
 
 
         }
+        private async void OnEditInventory(Inventory inventory)
+        {
+            if (inventory == null) return;
+
+            var editPage = new EditInventoryPage(_inventoryService,inventory, LoadInventory);
+
+            await Application.Current.MainPage.Navigation.PushAsync(editPage);
+        }
         public async void LoadInventory()
         {
             try
@@ -74,7 +88,7 @@ namespace TrayKeeper.ViewModel
                 var inventory = await _inventoryService.GetInventory();
 
                 InventoryRecords.Clear();
-                foreach (var inventoryItem in inventory)
+                foreach (var inventoryItem in inventory.Where(x => x?.NumberOfTraysBought > 0))
                 {
                     InventoryRecords.Add(inventoryItem);
                 }
@@ -84,7 +98,6 @@ namespace TrayKeeper.ViewModel
                 Console.WriteLine(ex.Message);
             }
         }
-
         public void clear()
         {
             InventoryNumber = 0;

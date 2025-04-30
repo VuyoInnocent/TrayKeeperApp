@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:helper="clr-namespace:TrayKeeper.Helpers"
+             x:Class="TrayKeeper.Views.OrdersHistoryPage"
+             Title="Orders History"
+             BackgroundColor="#000000">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <helper:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid Padding="10" RowDefinitions="Auto,Auto,*,Auto">
+                <!-- Filter Controls -->
+                <StackLayout Spacing="10" Grid.Row="0">
+                    <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
+                        <Entry Placeholder="Filter by Batch Number" 
+                               Text="{Binding FilterBatchNumber, Mode=TwoWay}" 
+                               PlaceholderColor="#B0B0B0"
+                               TextColor="#FFFFFF"/>
+                    </Frame>
+
+                    <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
+                        <Entry Placeholder="Filter by Client Name" 
+                               Text="{Binding FilterClientName, Mode=TwoWay}" 
+                               PlaceholderColor="#B0B0B0"
+                               TextColor="#FFFFFF"/>
+                    </Frame>
+
+                    <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <DatePicker x:Name="DateEntry"
+                                        Grid.Column="0"
+                                        Date="{Binding FilterOrderDate, Mode=TwoWay}" 
+                                        Format="yyyy-MM-dd"
+                                        TextColor="#FFFFFF"
+                                        BackgroundColor="#303030"/>
+
+                            <Button Grid.Column="1"
+                                    Text="Today"
+                                    Command="{Binding SetTodayCommand}"
+                                    TextColor="#FFFFFF" 
+                                    BackgroundColor="#D5F8B020" 
+                                    CornerRadius="20"
+                                    WidthRequest="80"
+                                    HeightRequest="40"
+                                    FontSize="14"
+                                    VerticalOptions="Center"/>
+                        </Grid>
+                    </Frame>
+
+                    <Button Text="Apply Filters"
+                            Command="{Binding ApplyFiltersCommand}"
+                            TextColor="#FFFFFF" 
+                            BackgroundColor="#D5F8B020" 
+                            CornerRadius="25" 
+                            HeightRequest="50" 
+                            FontSize="16" 
+                            FontAttributes="Bold" />
+
+                    <Button Text="Clear Filters"
+                            Command="{Binding ClearFiltersCommand}"
+                            TextColor="#FFFFFF" 
+                            BackgroundColor="#FF000020" 
+                            CornerRadius="25" 
+                            HeightRequest="50" 
+                            FontSize="16" 
+                            FontAttributes="Bold" />
+
+                    <Button Text="Refresh"
+                            Command="{Binding RefreshCommand}"
+                            TextColor="#FFFFFF" 
+                            BackgroundColor="#0000FF20" 
+                            CornerRadius="25" 
+                            HeightRequest="50" 
+                            FontSize="16" 
+                            FontAttributes="Bold" />
+                </StackLayout>
+
+                <!-- Orders List -->
+                <Frame BackgroundColor="#303030"
+                       HeightRequest="400" 
+                       CornerRadius="12" 
+                       HasShadow="True" 
+                       Grid.Row="1"
+                       IsVisible="{Binding IsNoOrdersFound, Converter={StaticResource InverseBooleanConverter}}">
+                    <ListView x:Name="ordersHistoryListView"
+                              ItemsSource="{Binding FilteredOrders}" 
+                              SeparatorVisibility="None"
+                              BackgroundColor="Transparent"
+                              HasUnevenRows="True">
+                        <ListView.Header>
+                            <StackLayout Orientation="Horizontal" BackgroundColor="#404040">
+                                <Label Text="Client" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="100" />
+                                <Label Text="Details" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="150" />
+                            </StackLayout>
+                        </ListView.Header>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Border Stroke="#D5F8B0" 
+                                            StrokeThickness="1" 
+                                            StrokeShape="RoundRectangle 8"
+                                            BackgroundColor="#303030">
+                                            <StackLayout Orientation="Horizontal" HeightRequest="80" Padding="10"  BackgroundColor="#303030">
+                                                <Label Text="{Binding ClientName}" 
+                                                       TextColor="#FFFFFF" 
+                                                       WidthRequest="80" FontSize="Medium"/>
+                                                <Label Text="{Binding FormattedDetails}" 
+                                                       FontSize="Medium"
+                                                       TextColor="#FFFFFF" 
+                                                       MaxLines="2" 
+                                                       LineBreakMode="WordWrap"
+                                                       VerticalOptions="Fill"
+                                                       VerticalTextAlignment="Start"/>
+                                        </StackLayout>
+                                    </Border>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Frame>
+
+                <!-- No Orders Found Message -->
+                <Label Text="No orders found matching the filters." 
+                       TextColor="#FFFFFF" 
+                       FontSize="16" 
+                       HorizontalOptions="Center" 
+                       IsVisible="{Binding IsNoOrdersFound}" 
+                       Grid.Row="2" />
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
