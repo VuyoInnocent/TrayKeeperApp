@@ -127,7 +127,7 @@ namespace TrayKeeper.ViewModel
           
             }
         }
-        private void FilterClientNames()
+        private async void FilterClientNames()
         {
             if (string.IsNullOrWhiteSpace(ClientName))
             {
@@ -136,7 +136,8 @@ namespace TrayKeeper.ViewModel
             }
             else
             {
-                List<Orders> filtered = Orders
+                var orders = await _orderService.GetOrders();
+                List<Orders> filtered = orders
                     .Where(name => name.ClientName.ToLower().Contains(ClientName.ToLower()))
                     .DistinctBy(order => order.ClientName, StringComparer.OrdinalIgnoreCase)
                     .ToList();
