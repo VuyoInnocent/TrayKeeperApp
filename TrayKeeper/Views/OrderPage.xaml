@@ -88,11 +88,19 @@
                         </Frame>
 
                       <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
-                        <Entry Placeholder="Cellphone" 
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Entry Placeholder="Cellphone" 
                                Text="{Binding Cellphone, Mode=TwoWay}" 
                                PlaceholderColor="#B0B0B0"
                                TextColor="#FFFFFF" />
-                    </Frame>
+                            <Button Text="📞" 
+                                    Command="{Binding PickContactCommand}"
+                                    Grid.Column="1"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#D5F8B0"
+                                    FontSize="16"/>
+                        </Grid>
+                       </Frame>
 
                     <Frame BackgroundColor="#303030" CornerRadius="12" Padding="10" HasShadow="True">
                         <Entry Placeholder="Location" 

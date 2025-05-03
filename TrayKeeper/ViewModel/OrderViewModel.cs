@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using Microsoft.Maui.ApplicationModel.Communication;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -25,6 +26,7 @@ namespace TrayKeeper.ViewModel
    
         public ICommand AddOrderCommand { get; }
         public ICommand EditOrderCommand { get; }
+        public ICommand PickContactCommand { get; set; }
         public OrderViewModel(IOrderService orderService, IInventoryService inventoryService)
         {
             Orders = new ObservableCollection<Orders>();
@@ -32,6 +34,7 @@ namespace TrayKeeper.ViewModel
             FilteredClientNames = new ObservableCollection<Orders>();
             AddOrderCommand = new Command(AddOrder);
             EditOrderCommand = new Command<Orders>(OnEditOrder);
+            PickContactCommand = new Command(async () => await PickContactAsync());
             _inventoryService = inventoryService;
             _orderService = orderService;
             IsListVisible = false;
@@ -136,6 +139,48 @@ namespace TrayKeeper.ViewModel
                 await ShowToast($"Loadind Orders failed: {ex.Message}");
             }
         }
+        private async Task PickContactAsync()
+        {
+            try
+            {
+                // Request permission first
+                var status = await Permissions.RequestAsync<Permissions.ContactsRead>();
+                if (status != PermissionStatus.Granted)
+                {
+                    await Shell.Current.DisplayAlert("Permission Required",
+                        "Contacts permission is needed to select a contact", "OK");
+                    return;
+                }
+
+                // Attempt to pick contact with platform detection
+                if (DeviceInfo.Platform == DevicePlatform.Android || DeviceInfo.Platform == DevicePlatform.iOS)
+                {
+                    var contact = await Microsoft.Maui.ApplicationModel.Communication.Contacts.Default.PickContactAsync();
+
+                    if (contact != null)
+                    {
+                        ClientName = contact.DisplayName;
+                        Cellphone = string.Concat(contact.Phones?.FirstOrDefault()?.PhoneNumber.Replace("+27", "0").Where(c => !char.IsWhiteSpace(c)));
+                    }
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Not Supported",
+                        "Contact picking is not available on this platform", "OK");
+                }
+            }
+            catch (Exception ex) when (ex is FeatureNotSupportedException || ex is NotSupportedException)
+            {
+                await Shell.Current.DisplayAlert("Not Supported",
+                    "Contact picking is not available on this device", "OK");
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error",
+                    $"Failed to pick contact: {ex.Message}", "OK");
+            }
+        }
+
         private async void FilterClientNames()
         {
             if (string.IsNullOrWhiteSpace(ClientName))
