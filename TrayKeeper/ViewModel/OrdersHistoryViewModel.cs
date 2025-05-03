@@ -29,13 +29,21 @@ namespace TrayKeeper.ViewModel
         }
         public async void LoadOrders()
         {
-            var orders = await _orderService.GetOrders();
-            
-            foreach (var order in orders)
+            try
             {
-                Orders.Add(order);
+                var orders = await _orderService.GetOrders();
+            
+                foreach (var order in orders)
+                {
+                    Orders.Add(order);
+                }
+                FilteredOrders = new ObservableCollection<Orders>(Orders);
             }
-            FilteredOrders = new ObservableCollection<Orders>(Orders);
+            catch (Exception ex)
+            {
+
+            }
+            
 
         }
         private void ApplyFilters()

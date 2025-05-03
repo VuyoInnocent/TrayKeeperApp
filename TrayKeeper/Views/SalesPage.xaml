@@ -1,93 +1,203 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="TrayKeeper.Views.SalesPage"
-             Title="Sales"
-             BackgroundColor="#000000">
+             Title="Sales Report"
+             BackgroundColor="#0F1A1F">
+
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout Padding="10" Spacing="20">
-                
-                <!-- Page Title -->
-                <Label Text="Sales Report" 
-                       FontSize="24" 
-                       FontAttributes="Bold" 
-                       TextColor="#D5F8B0" 
-                       HorizontalOptions="Center" />
+            <StackLayout Padding="20" Spacing="20">
 
-                <!-- Sales ListView -->
-            <Frame  BackgroundColor="#303030" HeightRequest="500"  CornerRadius="12" HasShadow="True">
-                    <ListView x:Name="SalesListView"
-                              ItemsSource="{Binding SalesDetails}" 
-                              BackgroundColor="Transparent"
-                              SeparatorVisibility="None">
-                        <ListView.Header>
-                            <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
-                                <Label Text="#" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="30" />
-                                <Label Text="Trays Sold" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="40" />
-                                <Label Text="Revenue" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="70" />
-                                <Label Text="Profit/Loss" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="80" />
-                                <Label Text="Trays Left" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="45" />
-                                <Label Text="Trays Broken" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
-                            </StackLayout>
-                        </ListView.Header>
-                        <ListView.ItemTemplate>
+                <!-- Header Section -->
+                <StackLayout Spacing="10">
+                    <Label Text="Sales Report" 
+                           FontSize="28" 
+                           FontAttributes="Bold" 
+                           TextColor="#D5F8B0" 
+                           HorizontalOptions="Center" />
+
+                    <!-- Summary Cards -->
+                    <FlexLayout Wrap="Wrap" JustifyContent="SpaceBetween" BindableLayout.ItemsSource="{Binding SummaryCards}">
+                        <BindableLayout.ItemTemplate>
                             <DataTemplate>
-                                <ViewCell>
-                                    <StackLayout Orientation="Horizontal" Padding="10" Spacing="10" BackgroundColor="#303030">
-                                        <Label Text="{Binding Id}" TextColor="#FFFFFF" WidthRequest="20" />
-                                        <Label Text="{Binding NumberOfTraysSold}" TextColor="#FFFFFF" WidthRequest="35" />
-                                        <Label Text="{Binding Revenue, StringFormat='R{0:F2}'}" TextColor="#00FF00" WidthRequest="60" />
-                                        <Label Text="{Binding ProfitLoss, StringFormat='R{0:F2}'}" TextColor="#FFFFFF" WidthRequest="70" />
-                                        <Label Text="{Binding NumberOfTraysLeft}" TextColor="#FFFFFF" WidthRequest="45" />
-                                        <Label Text="{Binding NumberOfTraysBroken}" TextColor="#FF0000" WidthRequest="50" />
+                                <Frame CornerRadius="12" Padding="15" HeightRequest="100" WidthRequest="160" 
+                                       BackgroundColor="{Binding CardColor}">
+                                    <StackLayout>
+                                        <Label Text="{Binding Title}" FontSize="12" TextColor="#FFFFFF80" />
+                                        <Label Text="{Binding Value}" FontSize="20" FontAttributes="Bold" 
+                                               TextColor="White" Margin="0,5,0,0" />
+                                        <Label Text="{Binding Subtitle}" FontSize="10" TextColor="#FFFFFF60" 
+                                               Margin="0,5,0,0" />
                                     </StackLayout>
-                                </ViewCell>
+                                </Frame>
                             </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.Footer>
-                            <StackLayout Orientation="Horizontal" Padding="10" BackgroundColor="#404040">
-                                <Label Text="Σ" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="25" />
-                                <Label Text="{Binding TotalTraysSold}" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
-                                <Label Text="{Binding TotalRevenue, StringFormat='R{0:F2}'}" TextColor="#00FF00" WidthRequest="70" />
-                                <Label Text="{Binding TotalProfitLoss, StringFormat='R{0:F2}'}" TextColor="#FFFFFF" WidthRequest="80" />
-                                <Label Text="{Binding TotalTraysLeft}" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="55" />
-                                <Label Text="{Binding TotalTraysBroken}" TextColor="#FF0000" FontAttributes="Bold" WidthRequest="50" />
-                            </StackLayout>
-                        </ListView.Footer>
-                    </ListView>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </StackLayout>
+
+                <!-- Sales Data Table -->
+                <Frame BackgroundColor="#1E2B32" CornerRadius="12" HasShadow="True" Padding="0">
+                    <CollectionView x:Name="SalesListView"
+                                  ItemsSource="{Binding SalesDetails}" 
+                                  SelectionMode="None">
+                        <CollectionView.Header>
+                            <Grid Padding="15" BackgroundColor="#2A3A44">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1.5*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="ID" TextColor="#D5F8B0" FontAttributes="Bold" />
+                                <Label Text="Sold" Grid.Column="1" TextColor="#D5F8B0" FontAttributes="Bold" />
+                                <Label Text="Revenue" Grid.Column="2" TextColor="#D5F8B0" FontAttributes="Bold" />
+                                <Label Text="Profit" Grid.Column="3" TextColor="#D5F8B0" FontAttributes="Bold" />
+                            </Grid>
+                        </CollectionView.Header>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="15" BackgroundColor="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.5*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1.5*" />
+                                        <ColumnDefinition Width="1.5*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Text="{Binding Id}" TextColor="#FFFFFF" />
+                                    <Label Text="{Binding NumberOfTraysSold}" TextColor="#FFFFFF" Grid.Column="1" />
+                                    <Label Text="{Binding Revenue, StringFormat='R{0:F2}'}" 
+                                           TextColor="#4CD964" Grid.Column="2" />
+                                    <Label Text="{Binding ProfitLoss, StringFormat='R{0:F2}'}" 
+                                           TextColor="{Binding ProfitColor}" Grid.Column="3" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                        <CollectionView.Footer>
+                            <Grid Padding="15" BackgroundColor="#2A3A44">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1.5*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Total" TextColor="#D5F8B0" FontAttributes="Bold" />
+                                <Label Text="{Binding TotalTraysSold}" TextColor="#D5F8B0" FontAttributes="Bold" Grid.Column="1" />
+                                <Label Text="{Binding TotalRevenue, StringFormat='R{0:F2}'}" 
+                                       TextColor="#D5F8B0" FontAttributes="Bold" Grid.Column="2" />
+                                <Label Text="{Binding TotalProfitLoss, StringFormat='R{0:F2}'}" 
+                                       TextColor="{Binding TotalProfitColor}" FontAttributes="Bold" Grid.Column="3" />
+                            </Grid>
+                        </CollectionView.Footer>
+                    </CollectionView>
                 </Frame>
 
+                <!-- Additional Details Expandable Section -->
+                <mct:Expander>
+                    <mct:Expander.Header>
+                        <Grid BackgroundColor="#1E2B32" Padding="10">
+                            <Label Text="Additional Details" 
+                   TextColor="White" 
+                   FontAttributes="Bold"/>
+                        </Grid>
+                    </mct:Expander.Header>
+
+                    <StackLayout Spacing="10" Padding="10" BackgroundColor="#1E2B32">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Text="Trays Left:" TextColor="#FFFFFF80" />
+                            <Label Text="{Binding TotalTraysLeft}" 
+                   TextColor="White" 
+                   FontAttributes="Bold" 
+                   Grid.Column="1" 
+                   HorizontalOptions="End" />
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Text="Trays Broken:" TextColor="#FFFFFF80" />
+                            <Label Text="{Binding TotalTraysBroken}" 
+                   TextColor="#FF3B30" 
+                   FontAttributes="Bold" 
+                   Grid.Column="1" 
+                   HorizontalOptions="End" />
+                        </Grid>
+                    </StackLayout>
+                </mct:Expander>
+
                 <!-- Action Buttons -->
-                <StackLayout Spacing="10">
-                    
-                    <Button Text="Export Orders to Excel"
-                            Command="{Binding ExportOrdersToExcelCommand}"
-                            TextColor="#FFFFFF" 
-                            BackgroundColor="#D5F8B020" 
-                            CornerRadius="25" 
+                <StackLayout Spacing="12" Margin="0,10,0,0">
+                    <Button Text="Import Data" 
+                            Command="{Binding ImportOrdersFromExcelCommand}"
+                            TextColor="#0F1A1F" 
+                            BackgroundColor="#D5F8B0" 
+                            CornerRadius="8" 
                             HeightRequest="50" 
                             FontSize="16" 
                             FontAttributes="Bold" />
 
-                    <Button Text="Export to Excel"
-                            Command="{Binding ExportToExcelCommand}"
-                            TextColor="#FFFFFF" 
-                            BackgroundColor="#D5F8B020" 
-                            CornerRadius="25" 
-                            HeightRequest="50" 
-                            FontSize="16" 
-                            FontAttributes="Bold" />
+                    <!-- Export Sales Section -->
+                    <Label Text="Export Sales:" 
+                           TextColor="#D5F8B0" 
+                           Margin="0,0,0,-10"/>
 
-                    <Button Text="Export to PDF"
-                            Command="{Binding ExportToPdfCommand}"
-                            TextColor="#FFFFFF" 
-                            BackgroundColor="#D5F8B020" 
-                            CornerRadius="25" 
-                            HeightRequest="50" 
-                            FontSize="16" 
-                            FontAttributes="Bold" />
-         
+                            <FlexLayout Wrap="Wrap" JustifyContent="SpaceBetween">
+                                <Button Text="Excel" 
+                                        Command="{Binding ExportSalesToExcelCommand}"
+                                        TextColor="White" 
+                                        BackgroundColor="#2A3A44" 
+                                        CornerRadius="8" 
+                                        HeightRequest="50" 
+                                        WidthRequest="160"
+                                        Margin="0,0,5,0"
+                                        FontSize="16" />
+
+                        <Button Text="PDF" 
+                                Command="{Binding ExportSalesToPdfCommand}"
+                                TextColor="White" 
+                                BackgroundColor="#2A3A44" 
+                                CornerRadius="8" 
+                                HeightRequest="50" 
+                                WidthRequest="160"
+                                Margin="5,0,0,0"
+                                FontSize="16" />
+                    </FlexLayout>
+
+                    <!-- Export Orders Section -->
+                    <Label Text="Export Orders:" 
+                           TextColor="#D5F8B0" 
+                           Margin="0,10,0,-10"/>
+
+                    <FlexLayout Wrap="Wrap" JustifyContent="SpaceBetween">
+                        <Button Text="Excel" 
+                                Command="{Binding ExportOrdersToExcelCommand}"
+                                TextColor="White" 
+                                BackgroundColor="#3A4A54" 
+                                CornerRadius="8" 
+                                HeightRequest="50" 
+                                WidthRequest="160"
+                                Margin="0,0,5,0"
+                                FontSize="16" />
+
+                        <Button Text="PDF" 
+                                Command="{Binding ExportOrdersToPdfCommand}"
+                                TextColor="White" 
+                                BackgroundColor="#3A4A54" 
+                                CornerRadius="8" 
+                                HeightRequest="50" 
+                                WidthRequest="160"
+                                Margin="5,0,0,0"
+                                FontSize="16" />
+                    </FlexLayout>
                 </StackLayout>
             </StackLayout>
         </ScrollView>

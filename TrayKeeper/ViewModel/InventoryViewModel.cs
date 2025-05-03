@@ -33,44 +33,48 @@ namespace TrayKeeper.ViewModel
         }
         private async void SaveInventory()
         {
-            var message = string.Empty;
-            var inventory = new Inventory
+            try
             {
-                NumberOfTraysBought = NumberOfTraysBought,
-                NumberOfDamagedTrays = NumberOfDamagedTrays,
-                NumberOfTraysSold = NumberOfTraysSold,
-                TrayCostPrice = Constants.TrayCostPrice,
-                TraySellingPrice = Constants.TraySellingPrice,
-                Date = Date
-            };
+                var inventory = new Inventory
+                {
+                    NumberOfTraysBought = NumberOfTraysBought,
+                    NumberOfDamagedTrays = NumberOfDamagedTrays,
+                    NumberOfTraysSold = NumberOfTraysSold,
+                    TrayCostPrice = Constants.TrayCostPrice,
+                    TraySellingPrice = Constants.TraySellingPrice,
+                    Date = Date
+                };
 
-            if(string.IsNullOrWhiteSpace(NumberOfTraysBought+"") || NumberOfTraysBought <= 0||
-             string.IsNullOrWhiteSpace(NumberOfDamagedTrays + "") ||
-             string.IsNullOrWhiteSpace(NumberOfTraysSold + "") ||
-             string.IsNullOrWhiteSpace(Date + ""))
-            {
-       
-                var toast2 = Toast.Make("Enter all values", ToastDuration.Long, 30);
-                await toast2.Show();
-                return;
+                if(string.IsNullOrWhiteSpace(NumberOfTraysBought+"") || NumberOfTraysBought <= 0||
+                 string.IsNullOrWhiteSpace(NumberOfDamagedTrays + "") ||
+                 string.IsNullOrWhiteSpace(NumberOfTraysSold + "") ||
+                 string.IsNullOrWhiteSpace(Date + ""))
+                {
+
+                    await ShowToast("Enter all values");
+           
+                    return;
+                }
+
+                var result = await _inventoryService.AddInventory(inventory);
+
+                if (result > 0)
+                {
+                    await ShowToast("Inventory saved successfully!");
+                    clear();
+                }
+                else
+                {
+                    await ShowToast($"Inventory not captured successfull!");
+                }
+                LoadInventory();
+
             }
-
-            var result = await _inventoryService.AddInventory(inventory);
-
-            if (result > 0)
+            catch (Exception ex)
             {
-                message = "Inventory saved successfully!";
-                clear();
+                await ShowToast($"Saving Inventory failed: {ex.Message}");
             }
-            else
-            {
-                message = $"Inventory not captured successfull!";
-            }
-            var toast = Toast.Make(message, ToastDuration.Long, 30);
-            await toast.Show();
-
-            LoadInventory();
-
+           
 
         }
         private async void OnEditInventory(Inventory inventory)
@@ -95,8 +99,14 @@ namespace TrayKeeper.ViewModel
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                await ShowToast($"Loading failed: {ex.Message}");
             }
+        }
+
+        private async Task ShowToast(string message)
+        {
+            var toast = Toast.Make(message, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
+            await toast.Show();
         }
         public void clear()
         {

@@ -39,64 +39,66 @@ namespace TrayKeeper.ViewModel
         }
         public async void AddOrder()
         {
-            var message = string.Empty;
-            // Validate inputs
-            if (string.IsNullOrWhiteSpace(ClientName) ||
-                string.IsNullOrWhiteSpace(Cellphone) ||
-                string.IsNullOrWhiteSpace(Location) ||
-                string.IsNullOrWhiteSpace(_selectedBatchNumber) ||
-                NumberOfTraysBought <= 0)
+            try
             {
-                // Optionally show a message to the user that input is invalid
-                var toast2 = Toast.Make("Enter all values", ToastDuration.Long, 30);
-                await toast2.Show();
-                return;
-            }
+                if (string.IsNullOrWhiteSpace(ClientName) ||
+                    string.IsNullOrWhiteSpace(Cellphone) ||
+                    string.IsNullOrWhiteSpace(Location) ||
+                    string.IsNullOrWhiteSpace(_selectedBatchNumber) ||
+                    NumberOfTraysBought <= 0)
+                {
+                    await ShowToast("Enter all values");
+                    return;
+                }
 
-            if (Cellphone.Length != 10)
+                if (Cellphone.Length != 10)
+                {
+                    await ShowToast("Invalid Cellphone number");
+                    return;
+                }
+
+                // Create a new order object
+                var newOrder = new Orders
+                {
+                    ClientName = ClientName,
+                    Cellphone = Cellphone,
+                    Location = Location,
+                    NumberTraysBought = NumberOfTraysBought,
+                    DateOrdered = DateTime.Now,
+                };
+
+                var getInventory = await _inventoryService.GetInventory();
+                int inventoryId = int.Parse(_selectedBatchNumber);
+                var existingBatch = getInventory.Where(x => x.InventoryNumber == inventoryId).FirstOrDefault();
+
+
+                if (existingBatch?.NumberOfTraysBought >= newOrder.NumberTraysBought)
+                {
+                    existingBatch.NumberOfTraysBought = existingBatch.NumberOfTraysBought - newOrder.NumberTraysBought;
+                    existingBatch.NumberOfTraysSold += newOrder.NumberTraysBought;
+
+                    //BatchNumber order is placed from 
+                    newOrder.BatchNumber = inventoryId;
+
+                    await _orderService.AddOrder(newOrder);
+                    await _inventoryService.UpdateInventory(existingBatch);
+                    LoadOrders();
+                    clear();
+
+                    await ShowToast("Order capture successfully!!");
+
+                }
+                else
+                {
+                    await ShowToast($"Order not capture successfull, only ({getInventory}) trays left!");
+                }
+
+
+            }
+            catch (Exception ex)
             {
-                var toast2 = Toast.Make("Invalid Cellphone number", ToastDuration.Long, 30);
-                await toast2.Show();
-                return;
+                await ShowToast($"Adding Order failed: {ex.Message}");
             }
-
-            // Create a new order object
-            var newOrder = new Orders
-            {
-                ClientName = ClientName,
-                Cellphone = Cellphone,
-                Location = Location,
-                NumberTraysBought = NumberOfTraysBought,
-                DateOrdered = DateTime.Now,
-            };
-
-            var getInventory = await _inventoryService.GetInventory();
-            int inventoryId = int.Parse(_selectedBatchNumber);
-            var existingBatch = getInventory.Where(x => x.InventoryNumber == inventoryId).FirstOrDefault();
-
-
-            if (existingBatch?.NumberOfTraysBought >= newOrder.NumberTraysBought)
-            {
-                existingBatch.NumberOfTraysBought = existingBatch.NumberOfTraysBought - newOrder.NumberTraysBought;
-                existingBatch.NumberOfTraysSold += newOrder.NumberTraysBought;
-
-                //BatchNumber order is placed from 
-                newOrder.BatchNumber = inventoryId;
-
-                await _orderService.AddOrder(newOrder);
-                await _inventoryService.UpdateInventory(existingBatch);
-                LoadOrders();
-                clear();
-
-                message = "Order capture successfully!!";
-
-            }
-            else {
-                message = $"Order not capture successfull, only ({getInventory}) trays left!";
-            }
-            var toast = Toast.Make(message, ToastDuration.Long, 30);
-            await toast.Show();
-      
 
         }
         private async void OnEditOrder(Orders order)
@@ -109,22 +111,29 @@ namespace TrayKeeper.ViewModel
         }
         public async void LoadOrders()
         {
-            var orders = await _orderService.GetOrders();
-            var inventory = await _inventoryService.GetInventory();
-            Orders.Clear();
-            _inventoryNumbers.Clear();
-            foreach (var order in orders.Where(x => x.IsPaid == false || x.IsCollected == false))
+            try
             {
-                Orders.Add(order);
-            }
-
-            foreach (var item in inventory)
-            {
-                if (item.NumberOfTraysBought > 0 )
+                var orders = await _orderService.GetOrders();
+                var inventory = await _inventoryService.GetInventory();
+                Orders.Clear();
+                _inventoryNumbers.Clear();
+                foreach (var order in orders.Where(x => x.IsPaid == false || x.IsCollected == false))
                 {
-                    _inventoryNumbers.Add(item.InventoryNumber + "");
+                    Orders.Add(order);
                 }
-          
+
+                foreach (var item in inventory)
+                {
+                    if (item.NumberOfTraysBought > 0)
+                    {
+                        _inventoryNumbers.Add(item.InventoryNumber + "");
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowToast($"Loadind Orders failed: {ex.Message}");
             }
         }
         private async void FilterClientNames()
@@ -156,6 +165,11 @@ namespace TrayKeeper.ViewModel
             Cellphone = string.Empty;    // Clear Cellphone
             Location = string.Empty;      // Clear Location
             NumberOfTraysBought = 0;     // Reset NumberOfTraysBought to 0
+        }
+        private async Task ShowToast(string message)
+        {
+            var toast = Toast.Make(message, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
+            await toast.Show();
         }
         public string ClientName
         {

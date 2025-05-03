@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
 using System.ComponentModel;
 using System.Windows.Input;
 using TrayKeeper.BL.Interfaces;
@@ -22,39 +21,47 @@ namespace TrayKeeper.ViewModel
         }
         private async void SaveInventory()
         {
-            var messsage = string.Empty;
-
-            if (NumberOfDamagedTrays > NumberOfTraysBought)
+            try
             {
-                messsage = "Error,number of damanged cannot be greater than number of trays bought!";
-                var toast1 = Toast.Make(messsage, ToastDuration.Long);
-                await toast1.Show();
-                return;
-            }
-            else
-            {
-                _inventory.NumberOfTraysBought = NumberOfTraysBought - NumberOfDamagedTrays;
-                _inventory.NumberOfDamagedTrays = NumberOfDamagedTrays;
-            }
+                if (NumberOfDamagedTrays > NumberOfTraysBought)
+                {
+                    await ShowToast("Error,number of damanged cannot be greater than number of trays bought!");
+                    return;
+                }
+                else
+                {
+                    _inventory.NumberOfTraysBought = NumberOfTraysBought - NumberOfDamagedTrays;
+                    _inventory.NumberOfDamagedTrays = NumberOfDamagedTrays;
+                }
 
 
-             var result = await _inventoryService.UpdateInventory(_inventory);
+                 var result = await _inventoryService.UpdateInventory(_inventory);
 
-            if (result > 0)
-            {
-                messsage = "Inventory updated successfully!";
-                _onInventoryUpdated?.Invoke(); // Trigger the event
+                if (result > 0)
+                {
+                    await ShowToast("Inventory updated successfully!");
+                    _onInventoryUpdated?.Invoke(); // Trigger the event
+                }
+                else
+                {
+                    await ShowToast("Inventory updated not updated!");
+                }
+
+                await Application.Current.MainPage.Navigation.PopAsync();
             }
-            else
+            catch (Exception ex)
             {
-                messsage = "Inventory updated not updated!";
+                await ShowToast($"Saving failed: {ex.Message}");
             }
-            var toast = Toast.Make(messsage, ToastDuration.Long);
-            await toast.Show();
-            
-            await Application.Current.MainPage.Navigation.PopAsync();
+
+
+           
         }
-
+        private async Task ShowToast(string message)
+        {
+            var toast = Toast.Make(message, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
+            await toast.Show();
+        }
         public int NumberOfTraysBought
         {
             get => _inventory.NumberOfTraysBought.GetValueOrDefault();

@@ -23,25 +23,36 @@ namespace TrayKeeper.ViewModel
         }
         private async void SaveOrder()
         {
-            var messsage = string.Empty;
-            // Here you can call the service to update the order
-            var result = await _orderService.UpdateOrder(_order);
+            try
+            {
 
-            if (result > 0)
-            {
-                messsage = "Order updated successfully!";
-                _onOrderUpdated?.Invoke(); // Trigger the event
+                // Here you can call the service to update the order
+                var result = await _orderService.UpdateOrder(_order);
+
+                if (result > 0)
+                {
+                    await ShowToast("Order updated successfully!");
+                    _onOrderUpdated?.Invoke(); // Trigger the event
+                }
+                else
+                {
+                    await ShowToast("Order updated not updated!");
+                }
+
+                // Close the edit page
+                await Application.Current.MainPage.Navigation.PopAsync();
             }
-            else
+            catch (Exception ex)
             {
-                messsage = "Order updated not updated!";
+                await ShowToast($"Edit failed: {ex.Message}");
             }
-            var toast = Toast.Make(messsage, ToastDuration.Long);
-            await toast.Show();
-            // Close the edit page
-            await Application.Current.MainPage.Navigation.PopAsync();
+           
         }
-
+        private async Task ShowToast(string message)
+        {
+            var toast = Toast.Make(message, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
+            await toast.Show();
+        }
         public string ClientName
         {
             get => _order.ClientName;

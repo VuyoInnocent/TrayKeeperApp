@@ -7,5 +7,6 @@ namespace TrayKeeper.BL.Interfaces
         Task<int> AddOrder(Orders order);
         Task<int> UpdateOrder(Orders order);
         Task<IEnumerable<Orders>> GetOrders();
+        Task<int> ImportOrders(List<Orders> orders);
     }
 }

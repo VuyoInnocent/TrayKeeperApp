@@ -4,10 +4,8 @@ using iTextSharp.text.pdf;
 using OfficeOpenXml;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Input;
 using TrayKeeper.BL.Interfaces;
-using TrayKeeper.Helpers;
 using TrayKeeper.Models;
 
 namespace TrayKeeper.ViewModel
@@ -21,20 +19,94 @@ namespace TrayKeeper.ViewModel
         private decimal? _totalRevenue;
         private decimal? _totalProfitLoss;
         private int? _totalTraysLeft;
-        private int? _totalTraysBroken;
-        public ICommand ExportToExcelCommand { get; }
-        public ICommand ExportToPdfCommand { get; }
+        private int? _totalTraysBroken;  
+        public ICommand ExportSalesToPdfCommand { get; }  
+        public ICommand ExportOrdersToPdfCommand { get; }
+        public ICommand ExportSalesToExcelCommand { get; }
         public ICommand ExportOrdersToExcelCommand { get; }
+        public ICommand ImportOrdersFromExcelCommand { get; }
         public  SalesViewModel(ISalesService salesService,
             IInventoryService inventoryService,IOrderService orderService)
         {
             _orderService = orderService;
             _inventoryService = inventoryService;
             SalesDetails = new ObservableCollection<Sales>();
+            ExportSalesToPdfCommand = new Command(ExportSalesToPdfCommandAsync); 
+            ExportOrdersToPdfCommand = new Command(ExportOrdersToPdfCommandAsync);
+            ExportSalesToExcelCommand = new Command(ExportSalesToExcelCommandAsync);
             ExportOrdersToExcelCommand = new Command(ExportOrdersToExcelCommandAsync);
-            ExportToExcelCommand = new Command(ExportToExcelAsync);
-            ExportToPdfCommand = new Command(ExportToPdf);
+            ImportOrdersFromExcelCommand = new Command(ImportOrdersFromExcelCommandAsync);
             LoadSalesDetails();
+        }
+
+        public async void ImportOrdersFromExcelCommandAsync()
+        {
+            try
+            {
+                var fileResult = await FilePicker.Default.PickAsync();
+                if (fileResult == null) return;
+
+                if (!fileResult.FileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+                {
+                    await ShowToast("Please select an Excel file (.xlsx)");
+                    return;
+                }
+
+                // Get the stream from the FileResult
+                using var stream = await fileResult.OpenReadAsync();
+
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                using (var package = new ExcelPackage(stream))
+                {
+                    var worksheet = package.Workbook.Worksheets["Orders"];
+                    if (worksheet == null)
+                    {
+                        await ShowToast("The Excel file doesn't contain an 'Orders' sheet");
+                        return;
+                    }
+
+                    int rowCount = worksheet.Dimension.Rows;
+                    if (rowCount < 2)
+                    {
+                        await ShowToast("No data found in the Excel file");
+                        return;
+                    }
+
+                    var importedOrders = new List<Orders>();
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        try
+                        {
+                            var order = new Orders
+                            {
+                                Id = worksheet.Cells[row, 1].GetValue<int>(),
+                                BatchNumber = worksheet.Cells[row, 2].GetValue<int>(),
+                                ClientName = worksheet.Cells[row, 3].GetValue<string>(),
+                                Cellphone = worksheet.Cells[row, 4].GetValue<string>(),
+                                Location = worksheet.Cells[row, 5].GetValue<string>(),
+                                NumberTraysBought = worksheet.Cells[row, 6].GetValue<int>(),
+                                IsPaid = worksheet.Cells[row, 7].GetValue<bool>(),
+                                IsCollected = worksheet.Cells[row, 8].GetValue<bool>(),
+                                DateOrdered = DateTime.Parse(worksheet.Cells[row, 9].GetValue<string>())
+                            };
+                            importedOrders.Add(order);
+                        }
+                        catch (Exception ex)
+                        {
+                            await ShowToast($"Error reading row {row}: {ex.Message}");
+                            continue;
+                        }
+                    }
+
+                    // Save to database
+                    var successCount = await _orderService.ImportOrders(importedOrders);
+                    await ShowToast($"Successfully imported {successCount} of {importedOrders.Count} orders");
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowToast($"Import failed: {ex.Message}");
+            }
         }
         public async void ExportOrdersToExcelCommandAsync()
         {
@@ -44,33 +116,54 @@ namespace TrayKeeper.ViewModel
             try
             {
                 var ordersList = await _orderService.GetOrders();
+
+                if (!ordersList.Any())
+                {
+                    await ShowToast("No Data available to  Export");
+                    return;
+                }
+
                 // Use EPPlus to create an Excel file
                 using (var package = new ExcelPackage())
                 {
                     var worksheet = package.Workbook.Worksheets.Add("Orders Report");
-                    worksheet.Cells[1, 1].Value = "Client Name";
-                    worksheet.Cells[1, 2].Value = "Trays bought";
-                    worksheet.Cells[1, 3].Value = "Date";
-                    worksheet.Cells[1, 4].Value = "Paid?";
-                    worksheet.Cells[1, 5].Value = "Collected?";
 
-                    int row = 2;
-                    foreach (var orders in ordersList)
+                    // Add headers for all columns
+                    worksheet.Cells[1, 1].Value = "ID";
+                    worksheet.Cells[1, 2].Value = "Batch Number";
+                    worksheet.Cells[1, 3].Value = "Client Name";
+                    worksheet.Cells[1, 4].Value = "Cellphone";
+                    worksheet.Cells[1, 5].Value = "Location";
+                    worksheet.Cells[1, 6].Value = "Trays Bought";
+                    worksheet.Cells[1, 7].Value = "Paid?";
+                    worksheet.Cells[1, 8].Value = "Collected?";
+                    worksheet.Cells[1, 9].Value = "Date Ordered";
+
+                    // Format headers
+                    using (var range = worksheet.Cells[1, 1, 1, 9])
                     {
-                        worksheet.Cells[row, 1].Value = orders.ClientName;
-                        worksheet.Cells[row, 2].Value = orders.NumberTraysBought;
-                        worksheet.Cells[row, 3].Value = orders.DateOrdered.ToShortDateString();
-                        worksheet.Cells[row, 4].Value = orders.IsPaid ? "Paid" : "Not Paid";
-                        worksheet.Cells[row, 5].Value = orders.IsCollected ? "Yes" : "No";
-                        row++;
+                        range.Style.Font.Bold = true;
+                        range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
                     }
 
-                    // Optionally, you can format the total row
-                    using (var range = worksheet.Cells[row, 1, row, 5])
+                    int row = 2;
+                    foreach (var order in ordersList)
                     {
-                        range.Style.Font.Bold = true; // Make the total row bold
-                        range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray); // Set background color
+                        worksheet.Cells[row, 1].Value = order.Id;
+                        worksheet.Cells[row, 2].Value = order.BatchNumber;
+                        worksheet.Cells[row, 3].Value = order.ClientName;
+                        worksheet.Cells[row, 4].Value = order.Cellphone;
+                        worksheet.Cells[row, 5].Value = order.Location;
+                        worksheet.Cells[row, 6].Value = order.NumberTraysBought;
+                        worksheet.Cells[row, 7].Value = order.IsPaid ? "Paid" : "Not Paid";
+                        worksheet.Cells[row, 8].Value = order.IsCollected ? "Yes" : "No";
+                        worksheet.Cells[row, 9].Value = order.DateOrdered;
+
+                        // Format date column
+                        worksheet.Cells[row, 9].Style.Numberformat.Format = "yyyy-MM-dd HH:mm:ss";
+
+                        row++;
                     }
 
                     // Ensure the directory exists
@@ -85,19 +178,14 @@ namespace TrayKeeper.ViewModel
                     await File.WriteAllBytesAsync(filePath, fileBytes);
 
                     // Show success toast
-                    var successMessage = $"Export successful! Sales report saved to {filePath}";
-                    var toast = Toast.Make(successMessage, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
-                    await toast.Show();
+                    await ShowToast($"Export successful! Orders report saved to {filePath}");
 
                     await PreviewFile(filePath);
                 }
             }
             catch (Exception ex)
             {
-                // Show error toast with detailed message
-                var errorMessage = $"Export failed: {ex.Message}";
-                var toast = Toast.Make(errorMessage, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
-                await toast.Show();
+                await ShowToast($"Export failed: {ex.Message}");
             }
         }
         public async void LoadSalesDetails()
@@ -136,13 +224,18 @@ namespace TrayKeeper.ViewModel
             TotalTraysLeft = SalesDetails.Sum(s => s.NumberOfTraysLeft);
             TotalTraysBroken = SalesDetails.Sum(s => s.NumberOfTraysBroken);
         }
-        public async void ExportToExcelAsync()
+        public async void ExportSalesToExcelCommandAsync()
         {
             // Set the LicenseContext for EPPlus
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
 
             try
             {
+                if (!SalesDetails.Any())
+                {
+                    await ShowToast("No Data available to  Export");
+                    return;
+                }
                 // Use EPPlus to create an Excel file
                 using (var package = new ExcelPackage())
                 {
@@ -190,26 +283,25 @@ namespace TrayKeeper.ViewModel
                     var fileBytes = package.GetAsByteArray();
                     await File.WriteAllBytesAsync(filePath, fileBytes);
 
-                    // Show success toast
-                    var successMessage = $"Export successful! Sales report saved to {filePath}";
-                    var toast = Toast.Make(successMessage, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
-                    await toast.Show();
-
+                    await ShowToast($"Export successful! Sales report saved to {filePath}");
+                 
                     await PreviewFile(filePath);
                 }
             }
             catch (Exception ex)
             {
-                // Show error toast with detailed message
-                var errorMessage = $"Export failed: {ex.Message}";
-                var toast = Toast.Make(errorMessage, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
-                await toast.Show();
+                await ShowToast($"Export failed: {ex.Message}");
             }
         }
-        public async void ExportToPdf()
+        public async void ExportSalesToPdfCommandAsync()
         {
             try
             {
+                if (!SalesDetails.Any())
+                {
+                    await ShowToast("No Data available to  Export");
+                    return;
+                }
                 // Use a library like iTextSharp to create a PDF file
                 using (var stream = new MemoryStream())
                 {
@@ -244,17 +336,95 @@ namespace TrayKeeper.ViewModel
                     var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $"{DateTime.Now:yyyy-MM-dd HH-mm-ss} SalesReport.pdf");
                     File.WriteAllBytes(filePath, stream.ToArray());
 
-                    // Show success toast
-                    var toast = Toast.Make($"Export Successful! Sales report exported to {filePath}", CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
-                    await toast.Show();
-
-                   await PreviewFile(filePath);
+                    await ShowToast($"Export Successful! Sales report exported to {filePath}");
+                
+                    await PreviewFile(filePath);
                 }
             }
             catch (Exception ex)
             {
-                var toast = Toast.Make($"Export failed: {ex.Message}", CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
-                await toast.Show();
+                await ShowToast($"Export failed: {ex.Message}");
+            }
+        }
+        public async void ExportOrdersToPdfCommandAsync()
+        {
+            try
+            {
+                var ordersList = await _orderService.GetOrders();
+
+                if (!ordersList.Any())
+                {
+                    await ShowToast("No orders available to export");
+                    return;
+                }
+
+                // Use iTextSharp to create a PDF file
+                using (var stream = new MemoryStream())
+                {
+                    var document = new Document();
+                    PdfWriter.GetInstance(document, stream);
+                    document.Open();
+
+                    // Add title and date
+                    document.Add(new Paragraph("ORDERS REPORT"));
+                    document.Add(new Paragraph($"Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}"));
+                    document.Add(new Paragraph(" ")); // Add space
+
+                    // Create a table for the orders data
+                    PdfPTable table = new PdfPTable(9); // 9 columns matching your Excel export
+                    table.WidthPercentage = 100;
+
+                    // Add headers
+                    table.AddCell(new Phrase("ID"));
+                    table.AddCell(new Phrase("Batch #"));
+                    table.AddCell(new Phrase("Client"));
+                    table.AddCell(new Phrase("Cellphone"));
+                    table.AddCell(new Phrase("Location"));
+                    table.AddCell(new Phrase("Trays"));
+                    table.AddCell(new Phrase("Paid?"));
+                    table.AddCell(new Phrase("Collected?"));
+                    table.AddCell(new Phrase("Date"));
+
+                    // Add order data
+                    foreach (var order in ordersList)
+                    {
+                        table.AddCell(order.Id.ToString());
+                        table.AddCell(order.BatchNumber.ToString());
+                        table.AddCell(order.ClientName);
+                        table.AddCell(order.Cellphone);
+                        table.AddCell(order.Location);
+                        table.AddCell(order.NumberTraysBought.ToString());
+                        table.AddCell(order.IsPaid ? "Yes" : "No");
+                        table.AddCell(order.IsCollected ? "Yes" : "No");
+                        table.AddCell(order.DateOrdered.ToString("yyyy-MM-dd"));
+                    }
+
+                    document.Add(table);
+
+                    // Add summary statistics
+                    document.Add(new Paragraph(" "));
+                    document.Add(new Paragraph($"Total Orders: {ordersList.Count()}"));
+                    document.Add(new Paragraph($"Total Trays: {ordersList.Sum(o => o.NumberTraysBought)}"));
+                    document.Add(new Paragraph($"Paid Orders: {ordersList.Count(o => o.IsPaid)}"));
+                    document.Add(new Paragraph($"Collected Orders: {ordersList.Count(o => o.IsCollected)}"));
+
+                    document.Close();
+
+                    // Save the PDF file
+                    var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    var directoryPath = Path.Combine(documentsPath, "OrdersReports");
+                    Directory.CreateDirectory(directoryPath);
+
+                    var filePath = Path.Combine(directoryPath, $"{DateTime.Now:yyyy-MM-dd HH-mm-ss} OrdersReport.pdf");
+                    File.WriteAllBytes(filePath, stream.ToArray());
+
+                    await ShowToast($"Export successful! Orders report saved to {filePath}");
+                    await PreviewFile(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowToast($"Export failed: {ex.Message}");
             }
         }
         public async Task PreviewFile(string filePath)
@@ -265,6 +435,11 @@ namespace TrayKeeper.ViewModel
             {
                 File = file
             });
+        }
+        private async Task ShowToast(string message)
+        {
+            var toast = Toast.Make(message, CommunityToolkit.Maui.Core.ToastDuration.Long, 30);
+            await toast.Show();
         }
         public int? TotalTraysSold
         {
