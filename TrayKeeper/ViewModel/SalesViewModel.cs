@@ -100,7 +100,11 @@ namespace TrayKeeper.ViewModel
 
                     // Save to database
                     var successCount = await _orderService.ImportOrders(importedOrders);
-                    await ShowToast($"Successfully imported {successCount} of {importedOrders.Count} orders");
+                    if (successCount > 0)
+                    {
+                        await ShowToast($"Successfully imported {successCount} of {importedOrders.Count} orders");
+                    }
+
                 }
             }
             catch (Exception ex)
