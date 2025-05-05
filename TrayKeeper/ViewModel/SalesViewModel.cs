@@ -85,8 +85,8 @@ namespace TrayKeeper.ViewModel
                                 Cellphone = worksheet.Cells[row, 4].GetValue<string>(),
                                 Location = worksheet.Cells[row, 5].GetValue<string>(),
                                 NumberTraysBought = worksheet.Cells[row, 6].GetValue<int>(),
-                                IsPaid = worksheet.Cells[row, 7].GetValue<bool>(),
-                                IsCollected = worksheet.Cells[row, 8].GetValue<bool>(),
+                                IsPaid = worksheet.Cells[row, 7].GetValue<string>().ToLower().Equals("paid") ? true : false,
+                                IsCollected = worksheet.Cells[row, 8].GetValue<string>().ToLower().Equals("yes") ? true : false,
                                 DateOrdered = DateTime.Parse(worksheet.Cells[row, 9].GetValue<string>())
                             };
                             importedOrders.Add(order);
