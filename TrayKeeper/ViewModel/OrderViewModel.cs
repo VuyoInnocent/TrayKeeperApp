@@ -20,6 +20,7 @@ namespace TrayKeeper.ViewModel
         private string? _selectedBatchNumber;
         private int? _numberTraysBought;
         private bool _isListVisible;
+        private bool _isContactFound;
         private string? _clientName;
         private string? _cellphone;
         private string? _location;
@@ -190,18 +191,22 @@ namespace TrayKeeper.ViewModel
             }
             else
             {
-                var orders = await _orderService.GetOrders();
-                List<Orders> filtered = orders
-                    .Where(name => name.ClientName.ToLower().Contains(ClientName.ToLower()))
-                    .DistinctBy(order => order.ClientName, StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-                FilteredClientNames.Clear();
-                foreach (var item in filtered)
+                if (!IsContactFound)
                 {
-                    FilteredClientNames.Add(item);
+                    var orders = await _orderService.GetOrders();
+                    List<Orders> filtered = orders
+                        .Where(name => name.ClientName.ToLower().Contains(ClientName.ToLower()))
+                        .DistinctBy(order => order.ClientName, StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                    FilteredClientNames.Clear();
+                    foreach (var item in filtered)
+                    {
+                        FilteredClientNames.Add(item);
+                    }
+
+                    IsListVisible = filtered.Any(); // Show the list if there are results
                 }
-                 
-                IsListVisible = filtered.Any(); // Show the list if there are results
+
             }
         }
         public void clear()
@@ -228,8 +233,9 @@ namespace TrayKeeper.ViewModel
                     FilterClientNames();
                 }
                 else {
-                    Cellphone = string.Empty;    // Clear Cellphone
-                    Location = string.Empty;      // Clear Location
+                    Cellphone = string.Empty;
+                    Location = string.Empty;
+                    IsContactFound = false;
                     IsListVisible = false;
                 }
              
@@ -269,6 +275,15 @@ namespace TrayKeeper.ViewModel
             {
                 _isListVisible = value;
                 OnPropertyChanged(nameof(IsListVisible));
+            }
+        }
+        public bool IsContactFound
+        {
+            get => _isContactFound;
+            set
+            {
+                _isContactFound = value;
+                OnPropertyChanged(nameof(IsContactFound));
             }
         }
         public ObservableCollection<string> InventoryNumber

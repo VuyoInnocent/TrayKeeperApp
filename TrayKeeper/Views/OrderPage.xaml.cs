@@ -42,6 +42,7 @@ public partial class OrderPage : ContentPage
     {
         if (e.Item is Orders selectedOrder)
         {
+            _orderViewModel.IsContactFound = true;
             _orderViewModel.Location = selectedOrder.Location;
             _orderViewModel.Cellphone = selectedOrder.Cellphone;
             _orderViewModel.ClientName = selectedOrder.ClientName;
